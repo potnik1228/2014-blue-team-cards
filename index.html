@@ -1014,7 +1014,7 @@
         
         // Initialize EmailJS
         emailjs.init({
-            publicKey: "WMglO50YF0-hrJ9EL",
+            publicKey: "WMgIO50YF0-hrJ9EL",
         });
         
         var players = [];
@@ -1027,7 +1027,6 @@
         // Email notification function
         async function sendUpdateNotification(playerName, updateType) {
             console.log('Attempting to send email notification...');
-            console.log('Coaches:', coaches);
             
             if (coaches.length === 0) {
                 console.log('No coaches to notify');
@@ -1053,7 +1052,7 @@
             console.log('Sending email with params:', templateParams);
             
             try {
-                const result = await emailjs.send('service_jf13wao', 'template_6bruddy', templateParams);
+                const result = await emailjs.send('service_jf13wao', 'template_6bruddy', templateParams, 'WMgIO50YF0-hrJ9EL');
                 console.log('Email notification sent successfully:', result);
             } catch (error) {
                 console.error('Failed to send email notification:', error);
