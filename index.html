@@ -504,6 +504,45 @@
         </div>
     </div>
     
+    <!-- Player Read-Only Page -->
+    <div id="playerReadOnlyPage" class="page">
+        <div class="page-header">
+            <h2 id="readOnlyPlayerTitle">Player Card</h2>
+            <button class="back-btn" onclick="showRoster()">← Back to Roster</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="admin-section">
+                <h3 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">Player Information</h3>
+                <div class="admin-info-grid">
+                    <div class="admin-info-item">
+                        <strong>Name:</strong> <span id="readOnlyPlayerName">-</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <strong>Position Number:</strong> <span id="readOnlyPlayerNumber">-</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <strong>Position Name:</strong> <span id="readOnlyPlayerPosition">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-section">
+                <h3 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">Goal & Corner Kick Card Responses</h3>
+                
+                <div class="response-item">
+                    <strong>Goal Kick: Where should you be on the pitch/field?</strong>
+                    <div class="response-text" id="readOnlyGoalKick">Not answered yet</div>
+                </div>
+                
+                <div class="response-item">
+                    <strong>Corner Kick (Defending): Where should you be on the pitch/field?</strong>
+                    <div class="response-text" id="readOnlyCornerKick">Not answered yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Goal & Corner Kick Card Page -->
     <div id="goalCornerPage" class="page">
         <div class="page-header">
@@ -699,7 +738,15 @@
                 loadPlayerDetails();
             }
         }
-        
+
+        function showPlayerReadOnlyPage() {
+            hideAllPages();
+            document.getElementById('playerReadOnlyPage').className = 'page active';
+            if (currentPlayerIndex >= 0) {
+                loadPlayerReadOnlyDetails();
+            }
+        }        
+
         function showCoachPage() {
             hideAllPages();
             document.getElementById('coachPage').className = 'page active';
@@ -808,31 +855,42 @@
             
             var html = '';
             
-            // Display coaches first
-            for (var i = 0; i < coaches.length; i++) {
-                var coach = coaches[i];
-                html += '<div class="player-item" onclick="selectCoach(' + i + ')">';
-                html += '<div>';
-                html += '<div class="player-name">' + coach.name + ' (Coach)</div>';
-                html += '<div style="color: #10b981; font-weight: bold;">' + coach.role + '</div>';
-                html += '</div>';
-                html += '<div style="color: #10b981;">→</div>';
+            // Coaches Section
+            if (coaches.length > 0) {
+                html += '<div style="margin-bottom: 30px;">';
+                html += '<h3 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px; margin-bottom: 20px;">Coaches</h3>';
+                
+                for (var i = 0; i < coaches.length; i++) {
+                    var coach = coaches[i];
+                    html += '<div class="player-item" style="cursor: default;">';
+                    html += '<div>';
+                    html += '<div class="player-name" style="color: #10b981;">' + coach.name + '</div>';
+                    html += '<div style="color: #10b981; font-weight: bold;">' + coach.role + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                }
                 html += '</div>';
             }
             
-            // Display players
-            for (var i = 0; i < players.length; i++) {
-                var player = players[i];
-                html += '<div class="player-item" onclick="selectPlayer(' + i + ')">';
+            // Players Section
+            if (players.length > 0) {
                 html += '<div>';
-                html += '<div class="player-name">' + player.name + '</div>';
-                if (player.number && player.position) {
-                    html += '<div style="color: #3b82f6; font-weight: bold;">#' + player.number + ' - ' + player.position + '</div>';
-                } else {
-                    html += '<div style="color: #999;">Position not set</div>';
+                html += '<h3 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px;">Players</h3>';
+                
+                for (var i = 0; i < players.length; i++) {
+                    var player = players[i];
+                    html += '<div class="player-item" onclick="selectPlayerReadOnly(' + i + ')">';
+                    html += '<div>';
+                    html += '<div class="player-name">' + player.name + '</div>';
+                    if (player.number && player.position) {
+                        html += '<div style="color: #3b82f6; font-weight: bold;">#' + player.number + ' - ' + player.position + '</div>';
+                    } else {
+                        html += '<div style="color: #999;">Position not set</div>';
+                    }
+                    html += '</div>';
+                    html += '<div style="color: #3b82f6;">→</div>';
+                    html += '</div>';
                 }
-                html += '</div>';
-                html += '<div style="color: #3b82f6;">→</div>';
                 html += '</div>';
             }
             
@@ -849,6 +907,11 @@
             currentPlayerIndex = index;
             showPlayerPage();
         }
+
+        function selectPlayerReadOnly(index) {
+            currentPlayerIndex = index;
+            showPlayerReadOnlyPage();
+        }        
         
         function loadPlayerDetails() {
             var player = players[currentPlayerIndex];
@@ -858,6 +921,34 @@
             document.getElementById('playerPosition').value = player.position;
         }
         
+        function loadPlayerReadOnlyDetails() {
+            var player = players[currentPlayerIndex];
+            
+            document.getElementById('readOnlyPlayerTitle').textContent = player.name + ' - Player Card';
+            document.getElementById('readOnlyPlayerName').textContent = player.name;
+            document.getElementById('readOnlyPlayerNumber').textContent = player.number || 'Not set';
+            document.getElementById('readOnlyPlayerPosition').textContent = player.position || 'Not set';
+            
+            var goalKickElement = document.getElementById('readOnlyGoalKick');
+            var cornerKickElement = document.getElementById('readOnlyCornerKick');
+            
+            if (player.goalKick) {
+                goalKickElement.textContent = player.goalKick;
+                goalKickElement.className = 'response-text answered';
+            } else {
+                goalKickElement.textContent = 'Not answered yet';
+                goalKickElement.className = 'response-text';
+            }
+            
+            if (player.cornerKick) {
+                cornerKickElement.textContent = player.cornerKick;
+                cornerKickElement.className = 'response-text answered';
+            } else {
+                cornerKickElement.textContent = 'Not answered yet';
+                cornerKickElement.className = 'response-text';
+            }
+        }
+
         async function savePlayerDetails() {
             var number = document.getElementById('playerNumber').value.trim();
             var position = document.getElementById('playerPosition').value.trim();
