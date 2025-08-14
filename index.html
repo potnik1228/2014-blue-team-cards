@@ -643,6 +643,7 @@
             if (!firebaseReady) {
                 // Fallback to localStorage
                 localStorage.setItem('soccerPlayers', JSON.stringify(players));
+                localStorage.setItem('soccerCoaches', JSON.stringify(coaches));
                 return;
             }
             
@@ -664,10 +665,10 @@
         async function loadPlayersFromCloud() {
             if (!firebaseReady) {
                 // Fallback to localStorage
-                const saved = localStorage.getItem('soccerPlayers');
-                if (saved) {
-                    players = JSON.parse(saved);
-                }
+                const savedPlayers = localStorage.getItem('soccerPlayers');
+                const savedCoaches = localStorage.getItem('soccerCoaches');
+                if (savedPlayers) players = JSON.parse(savedPlayers);
+                if (savedCoaches) coaches = JSON.parse(savedCoaches);
                 return;
             }
             
