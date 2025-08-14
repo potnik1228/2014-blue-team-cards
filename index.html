@@ -18,35 +18,6 @@
             background-color: #f5f5f5;
         }
         
-        // Email notification function
-        async function sendUpdateNotification(playerName, updateType) {
-            if (coaches.length === 0) {
-                console.log('No coaches to notify');
-                return;
-            }
-            
-            const coachEmails = coaches.filter(coach => coach.email).map(coach => coach.email);
-            if (coachEmails.length === 0) {
-                console.log('No coach emails available');
-                return;
-            }
-            
-            const templateParams = {
-                player_name: playerName,
-                update_type: updateType,
-                team_name: '2014 Blue Team',
-                to_email: coachEmails.join(', '),
-                timestamp: new Date().toLocaleString()
-            };
-            
-            try {
-                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-                console.log('Email notification sent successfully');
-            } catch (error) {
-                console.error('Failed to send email notification:', error);
-            }
-        }
-        
         .header {
             background: linear-gradient(45deg, #1e3a8a, #3b82f6);
             color: white;
@@ -526,7 +497,37 @@
         var players = [];
         var coaches = [];
         var currentPlayerIndex = -1;
+        var currentCoachIndex = -1; 
         
+        // Email notification function
+        async function sendUpdateNotification(playerName, updateType) {
+            if (coaches.length === 0) {
+                console.log('No coaches to notify');
+                return;
+            }
+            
+            const coachEmails = coaches.filter(coach => coach.email).map(coach => coach.email);
+            if (coachEmails.length === 0) {
+                console.log('No coach emails available');
+                return;
+            }
+            
+            const templateParams = {
+                player_name: playerName,
+                update_type: updateType,
+                team_name: '2014 Blue Team',
+                to_email: coachEmails.join(', '),
+                timestamp: new Date().toLocaleString()
+            };
+            
+            try {
+                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+                console.log('Email notification sent successfully');
+            } catch (error) {
+                console.error('Failed to send email notification:', error);
+            }
+        }
+
         // Data persistence functions
         async function savePlayersToCloud() {
             if (!firebaseReady) {
@@ -693,12 +694,26 @@
         function displayRoster() {
             var container = document.getElementById('rosterList');
             
-            if (players.length === 0) {
-                container.innerHTML = '<div class="empty-message">No players in roster yet</div>';
+            if (players.length === 0 && coaches.length === 0) {
+                container.innerHTML = '<div class="empty-message">No players or coaches in roster yet</div>';
                 return;
             }
             
             var html = '';
+            
+            // Display coaches first
+            for (var i = 0; i < coaches.length; i++) {
+                var coach = coaches[i];
+                html += '<div class="player-item" onclick="selectCoach(' + i + ')">';
+                html += '<div>';
+                html += '<div class="player-name">' + coach.name + ' (Coach)</div>';
+                html += '<div style="color: #10b981; font-weight: bold;">' + coach.role + '</div>';
+                html += '</div>';
+                html += '<div style="color: #10b981;">→</div>';
+                html += '</div>';
+            }
+            
+            // Display players
             for (var i = 0; i < players.length; i++) {
                 var player = players[i];
                 html += '<div class="player-item" onclick="selectPlayer(' + i + ')">';
@@ -717,6 +732,12 @@
             container.innerHTML = html;
         }
         
+        function selectCoach(index) {
+            currentPlayerIndex = -1; // Reset player index
+            currentCoachIndex = index;
+            showCoachPage();
+        }
+
         function selectPlayer(index) {
             currentPlayerIndex = index;
             showPlayerPage();
@@ -760,28 +781,59 @@
             var goalKick = document.getElementById('goalKickAnswer').value.trim();
             var cornerKick = document.getElementById('cornerKickAnswer').value.trim();
             
-            players[currentPlayerIndex].goalKick = goalKick;
-            players[currentPlayerIndex].cornerKick = cornerKick;
+            // Show loading state
+            var saveBtn = document.querySelector('#goalCornerPage .btn-save');
+            var originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Uploading...';
+            saveBtn.disabled = true;
             
-            await savePlayersToCloud();
-            
-            // Send email notification
-            await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
-            
-            alert('Card answers saved!');
-            showPlayerPage();
+            try {
+                players[currentPlayerIndex].goalKick = goalKick;
+                players[currentPlayerIndex].cornerKick = cornerKick;
+                
+                await savePlayersToCloud();
+                
+                // Send email notification
+                await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
+                
+                // Show success message
+                alert('Answers uploaded successfully!');
+                showPlayerPage();
+                
+            } catch (error) {
+                console.error('Error saving answers:', error);
+                alert('Error uploading answers. Please try again.');
+                
+                // Reset button
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }
         }
         
         // Admin functions
         function displayAdminRoster() {
             var container = document.getElementById('adminRosterList');
             
-            if (players.length === 0) {
-                container.innerHTML = '<div class="empty-message">No players in system yet</div>';
+            if (players.length === 0 && coaches.length === 0) {
+                container.innerHTML = '<div class="empty-message">No players or coaches in system yet</div>';
                 return;
             }
             
             var html = '';
+            
+            // Display coaches first
+            for (var i = 0; i < coaches.length; i++) {
+                var coach = coaches[i];
+                html += '<div class="player-item" onclick="selectAdminCoach(' + i + ')">';
+                html += '<div>';
+                html += '<div class="player-name">' + coach.name + ' (Coach)</div>';
+                html += '<div style="color: #666; font-size: 14px;">' + coach.role + ' • ' + (coach.email || 'No email') + '</div>';
+                html += '</div>';
+                html += '<div style="color: #10b981;">→</div>';
+                html += '</div>';
+            }
+            
+            // Display players
             for (var i = 0; i < players.length; i++) {
                 var player = players[i];
                 var hasResponses = player.goalKick || player.cornerKick;
