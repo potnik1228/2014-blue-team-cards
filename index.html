@@ -278,7 +278,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Home Page -->
     <div id="homePage" class="page active">
         <div class="header">
@@ -631,9 +631,10 @@
         };
         
         // Initialize Firebase
+
         let db;
         let firebaseReady = false;
-        
+
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
@@ -641,11 +642,20 @@
             firebaseReady = true;
             console.log('Firebase connected successfully');
             
+            // Check if this is a direct player link
+            const urlParams = new URLSearchParams(window.location.search);
+            const isDirectPlayerLink = urlParams.get('player') && urlParams.get('id');
+            
             // Check authentication state
             auth.onAuthStateChanged(function(user) {
                 if (user) {
                     currentUser = user;
                     console.log('User signed in:', user.email);
+                    showMainApp();
+                } else if (isDirectPlayerLink) {
+                    // Allow direct player access without authentication
+                    currentUser = null;
+                    console.log('Direct player link access - bypassing authentication');
                     showMainApp();
                 } else {
                     currentUser = null;
@@ -667,7 +677,7 @@
         var players = [];
         var coaches = [];
         var currentPlayerIndex = -1;
-        var currentCoachIndex = -1; 
+        var currentCoachIndex = -1;
         var currentUser = null;
         var auth;
         
@@ -815,7 +825,7 @@
                 }
             } catch (error) {
                 console.error('Error loading from cloud:', error);
-                // Fallback to localStorage
+                // Fallback to localStorage for direct player links
                 const savedPlayers = localStorage.getItem('soccerPlayers');
                 const savedCoaches = localStorage.getItem('soccerCoaches');
                 if (savedPlayers) players = JSON.parse(savedPlayers);
