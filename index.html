@@ -606,6 +606,10 @@
                     <div class="btn-title">Admin</div>
                     <div class="btn-desc">Manage all player data and responses</div>
                 </button>
+                    <button class="nav-btn" onclick="showActivityLog()">
+                    <div class="btn-title">Activity Reports</div>
+                    <div class="btn-desc">View all player submissions and coach reviews</div>
+                </button>
             </div>
         </div>
     </div>
@@ -681,6 +685,30 @@
         
         <div class="roster-list" id="adminRosterList">
             <div class="empty-message">No players in system yet</div>
+        </div>
+    </div>
+
+    <!-- Activity Log Page -->
+    <div id="activityLogPage" class="page">
+        <div class="page-header">
+            <h2>Activity Reports</h2>
+            <button class="back-btn" onclick="showHome()">← Back to Home</button>
+        </div>
+        
+        <div class="form-container">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+                <label>Filter by:</label>
+                <select id="activityFilter" onchange="loadActivityLog()" style="padding: 8px; border-radius: 6px; border: 2px solid #e2e8f0;">
+                    <option value="all">All Activities</option>
+                    <option value="questionnaire_submitted">Questionnaire Submissions</option>
+                    <option value="questionnaire_reviewed">Coach Reviews</option>
+                </select>
+                <button onclick="loadActivityLog()" class="btn btn-save" style="padding: 8px 15px; margin: 0;">Refresh</button>
+            </div>
+            
+            <div id="activityLogList">
+                <div class="empty-message">Loading activity log...</div>
+            </div>
         </div>
     </div>
     
@@ -1066,6 +1094,90 @@
             }
         }
 
+        function showActivityLog() {
+            hideAllPages();
+            document.getElementById('activityLogPage').className = 'page active';
+            
+            var pageContent = document.getElementById('activityLogPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Activity Reports', 'Track all player submissions and coach reviews', true) + existingContent;
+            }
+            
+            loadActivityLog();
+        }
+
+        async function loadActivityLog() {
+            if (!firebaseReady) {
+                document.getElementById('activityLogList').innerHTML = '<div class="empty-message">Firebase not connected</div>';
+                return;
+            }
+            
+            try {
+                const filter = document.getElementById('activityFilter').value;
+                
+                let query = db.collection('activity_log')
+                    .where('teamId', '==', '2014-blue')
+                    .orderBy('timestamp', 'desc')
+                    .limit(100);
+                
+                if (filter !== 'all') {
+                    query = query.where('activityType', '==', filter);
+                }
+                
+                const activities = await query.get();
+                
+                var html = '';
+                if (activities.empty) {
+                    html = '<div class="empty-message">No activities found</div>';
+                } else {
+                    html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+                    html += '<thead><tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">';
+                    html += '<th style="padding: 12px; text-align: left; font-weight: 600; color: #1e40af;">Date/Time</th>';
+                    html += '<th style="padding: 12px; text-align: left; font-weight: 600; color: #1e40af;">Player</th>';
+                    html += '<th style="padding: 12px; text-align: left; font-weight: 600; color: #1e40af;">Activity</th>';
+                    html += '<th style="padding: 12px; text-align: left; font-weight: 600; color: #1e40af;">Details</th>';
+                    html += '</tr></thead><tbody>';
+                    
+                    activities.forEach(doc => {
+                        const activity = doc.data();
+                        const date = activity.timestamp.toDate().toLocaleString();
+                        
+                        var activityTypeDisplay = '';
+                        var rowColor = '';
+                        
+                        switch(activity.activityType) {
+                            case 'questionnaire_submitted':
+                                activityTypeDisplay = '📝 Questionnaire Submitted';
+                                rowColor = '#f0f9ff'; // Light blue
+                                break;
+                            case 'questionnaire_reviewed':
+                                activityTypeDisplay = '✅ Coach Review';
+                                rowColor = '#f0fdf4'; // Light green
+                                break;
+                            default:
+                                activityTypeDisplay = activity.activityType;
+                                rowColor = '#fafafa';
+                        }
+                        
+                        html += `<tr style="background: ${rowColor}; border-bottom: 1px solid #e2e8f0;">`;
+                        html += `<td style="padding: 12px; font-size: 14px;">${date}</td>`;
+                        html += `<td style="padding: 12px; font-weight: 600;">${activity.playerName}</td>`;
+                        html += `<td style="padding: 12px;">${activityTypeDisplay}</td>`;
+                        html += `<td style="padding: 12px; font-size: 14px; max-width: 300px;">${activity.details}</td>`;
+                        html += '</tr>';
+                    });
+                    
+                    html += '</tbody></table></div>';
+                }
+                
+                document.getElementById('activityLogList').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading activity log:', error);
+                document.getElementById('activityLogList').innerHTML = '<div class="empty-message">Error loading activity log</div>';
+            }
+        }
+
         // Authentication functions
         function showLoginPage() {
             hideAllPages();
@@ -1404,6 +1516,14 @@
             if (addCoachBtn) {
                 const titleDiv = addCoachBtn.querySelector('.btn-title');
                 titleDiv.textContent = `Add Coach (${coachCount} current)`;
+            }
+            
+            // ADD THESE NEW LINES HERE:
+            const activityBtn = document.querySelector('.nav-btn[onclick="showActivityLog()"]');
+            if (activityBtn) {
+                // You could add a counter here if you want to show recent activity count
+                const titleDiv = activityBtn.querySelector('.btn-title');
+                titleDiv.textContent = 'Activity Reports';
             }
         }
         
@@ -1827,10 +1947,15 @@ async function savePlayerDetails() {
                 
                 await savePlayersToCloud();
                 
-                // Add debugging
-                console.log('About to send email notification for questionnaire update');
+                // Log the activity
+                await saveActivityLog(
+                    players[currentPlayerIndex].name,
+                    'questionnaire_submitted',
+                    `Goal & Corner Kick responses submitted. Goal Kick: ${goalKick ? 'Updated' : 'Not provided'}. Corner Kick: ${cornerKick ? 'Updated' : 'Not provided'}`,
+                    players[currentPlayerIndex].uuid
+                );
                 
-                // Send email notification for questionnaire updates
+                // Send email notification
                 await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
                 
                 alert('Answers uploaded successfully!');
@@ -1917,6 +2042,31 @@ async function savePlayerDetails() {
             
             container.innerHTML = html;
         }
+
+        // Add this new function to save activity logs
+        async function saveActivityLog(playerName, activityType, details = '', playerUUID = null) {
+            if (!firebaseReady) {
+                console.log('Firebase not ready, activity not logged');
+                return;
+            }
+            
+            try {
+                const activity = {
+                    playerName: playerName,
+                    playerUUID: playerUUID,
+                    activityType: activityType, // 'questionnaire_submitted', 'questionnaire_reviewed', 'position_updated'
+                    details: details,
+                    timestamp: new Date(),
+                    teamId: '2014-blue',
+                    coachEmail: currentUser ? currentUser.email : 'system'
+                };
+                
+                await db.collection('activity_log').add(activity);
+                console.log('Activity logged:', activityType, 'for', playerName);
+            } catch (error) {
+                console.error('Error saving activity log:', error);
+            }
+        }        
         
         function selectAdminPlayer(index) {
             currentPlayerIndex = index;
@@ -1969,10 +2119,18 @@ async function savePlayerDetails() {
             // Update player data
             player.goalKickComments = goalKickComments;
             player.cornerKickComments = cornerKickComments;
-            player.needsReview = false; // Mark as reviewed
+            player.needsReview = false;
             player.reviewedDate = new Date().toISOString().split('T')[0];
             
             await savePlayersToCloud();
+            
+            // Log the coach review activity
+            await saveActivityLog(
+                player.name,
+                'questionnaire_reviewed',
+                `Coach reviewed responses. Goal Kick feedback: ${goalKickComments ? 'Provided' : 'None'}. Corner Kick feedback: ${cornerKickComments ? 'Provided' : 'None'}`,
+                player.uuid
+            );
             
             // Update the display
             updateReviewStatusDisplay();
