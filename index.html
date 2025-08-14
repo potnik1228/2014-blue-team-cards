@@ -403,6 +403,69 @@
         </div>
     </div>
     
+    <!-- Admin Coach Detail Page -->
+    <div id="adminCoachPage" class="page">
+        <div class="page-header">
+            <h2 id="adminCoachTitle">Coach Admin</h2>
+            <button class="back-btn" onclick="showAdmin()">← Back to Admin</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="admin-section">
+                <h3 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">Coach Information</h3>
+                <div class="admin-info-grid">
+                    <div class="admin-info-item" style="border-left: 4px solid #10b981;">
+                        <strong>Name:</strong> <span id="adminCoachName">-</span>
+                    </div>
+                    <div class="admin-info-item" style="border-left: 4px solid #10b981;">
+                        <strong>Role:</strong> <span id="adminCoachRole">-</span>
+                    </div>
+                    <div class="admin-info-item" style="border-left: 4px solid #10b981;">
+                        <strong>Email:</strong> <span id="adminCoachEmail">-</span>
+                    </div>
+                    <div class="admin-info-item" style="border-left: 4px solid #10b981;">
+                        <strong>Added Date:</strong> <span id="adminCoachAdded">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="showCoachEditPage()">Edit Coach</button>
+                <button class="btn" onclick="deleteCoachAdmin()" style="background: #ef4444; color: white;">Delete Coach</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coach Edit Page -->
+    <div id="coachPage" class="page">
+        <div class="page-header">
+            <h2 id="coachPageTitle">Coach Details</h2>
+            <button class="back-btn" onclick="showAdminCoach()">← Back to Coach Admin</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label>Coach Name</label>
+                <input type="text" id="coachName" placeholder="Enter coach name">
+            </div>
+            
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" id="coachRoleEdit" placeholder="Head Coach, Assistant Coach, etc.">
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="coachEmailEdit" placeholder="coach@email.com">
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="saveCoachDetails()">Save Changes</button>
+                <button class="btn btn-cancel" onclick="showAdminCoach()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Player Page -->
     <div id="playerPage" class="page">
         <div class="page-header">
@@ -620,6 +683,14 @@
                 loadAdminPlayerDetails();
             }
         }
+ 
+        function showAdminCoach() {
+            hideAllPages();
+            document.getElementById('adminCoachPage').className = 'page active';
+            if (currentCoachIndex >= 0) {
+                loadAdminCoachDetails();
+            }
+        }        
         
         function showPlayerPage() {
             hideAllPages();
@@ -629,6 +700,32 @@
             }
         }
         
+        function showCoachPage() {
+            hideAllPages();
+            document.getElementById('coachPage').className = 'page active';
+            if (currentCoachIndex >= 0) {
+                loadCoachDetails();
+            }
+        }
+
+        function loadAdminCoachDetails() {
+            var coach = coaches[currentCoachIndex];
+            
+            document.getElementById('adminCoachTitle').textContent = 'Admin: ' + coach.name;
+            document.getElementById('adminCoachName').textContent = coach.name;
+            document.getElementById('adminCoachRole').textContent = coach.role;
+            document.getElementById('adminCoachEmail').textContent = coach.email || 'No email provided';
+            document.getElementById('adminCoachAdded').textContent = coach.addedDate || 'Unknown';
+        }
+
+        function loadCoachDetails() {
+            var coach = coaches[currentCoachIndex];
+            document.getElementById('coachPageTitle').textContent = coach.name + ' - Coach Details';
+            document.getElementById('coachName').value = coach.name;
+            document.getElementById('coachRoleEdit').value = coach.role;
+            document.getElementById('coachEmailEdit').value = coach.email || '';
+        }
+
         function showGoalCornerCard() {
             hideAllPages();
             document.getElementById('goalCornerPage').className = 'page active';
@@ -666,6 +763,16 @@
             await savePlayersToCloud();
             alert('Coach "' + name + '" added successfully!');
             showHome();
+        }
+
+        async function deleteCoachAdmin() {
+            var coach = coaches[currentCoachIndex];
+            if (confirm('Are you sure you want to delete coach ' + coach.name + '? This cannot be undone.')) {
+                coaches.splice(currentCoachIndex, 1);
+                await savePlayersToCloud();
+                alert('Coach deleted successfully');
+                showAdmin();
+            }
         }
         
         // Player functions
@@ -868,6 +975,12 @@
             currentPlayerIndex = index;
             showAdminPlayer();
         }
+
+        function selectAdminCoach(index) {
+            currentCoachIndex = index;
+            currentPlayerIndex = -1; // Reset player index
+            showAdminCoach();
+        }
         
         function loadAdminPlayerDetails() {
             var player = players[currentPlayerIndex];
@@ -911,6 +1024,38 @@
             }
         }
         
+        function showCoachEditPage() {
+            hideAllPages();
+            document.getElementById('coachPage').className = 'page active';
+            if (currentCoachIndex >= 0) {
+                loadCoachDetails();
+            }
+        }
+
+        async function saveCoachDetails() {
+            var name = document.getElementById('coachName').value.trim();
+            var role = document.getElementById('coachRoleEdit').value.trim();
+            var email = document.getElementById('coachEmailEdit').value.trim();
+            
+            if (!name) {
+                alert('Please enter a coach name');
+                return;
+            }
+            
+            if (!role) {
+                alert('Please enter a role');
+                return;
+            }
+            
+            coaches[currentCoachIndex].name = name;
+            coaches[currentCoachIndex].role = role;
+            coaches[currentCoachIndex].email = email;
+            
+            await savePlayersToCloud();
+            alert('Coach information updated successfully!');
+            showAdminCoach();
+        }
+
         function generatePlayerLink() {
             var player = players[currentPlayerIndex];
             var baseUrl = window.location.href;
