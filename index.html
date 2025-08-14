@@ -1262,7 +1262,18 @@
                 await sendUpdateNotification(players[currentPlayerIndex].name, 'position information');
                 
                 alert('Position information saved!');
-                showRoster();
+                
+                // Check if this is direct player access
+                const urlParams = new URLSearchParams(window.location.search);
+                const isDirectPlayerLink = urlParams.get('player') && urlParams.get('id');
+                
+                if (isDirectPlayerLink) {
+                    // Stay on player page for direct access
+                    showPlayerPage();
+                } else {
+                    // Go to roster for coach access
+                    showRoster();
+                }
             } else {
                 alert('Please fill in both position number and position name');
             }
@@ -1301,7 +1312,18 @@
                 
                 // Show success message
                 alert('Answers uploaded successfully!');
-                showPlayerPage();
+                
+                // Check if this is direct player access
+                const urlParams = new URLSearchParams(window.location.search);
+                const isDirectPlayerLink = urlParams.get('player') && urlParams.get('id');
+                
+                if (isDirectPlayerLink) {
+                    // Stay on player page for direct access
+                    showPlayerPage();
+                } else {
+                    // Go to player page for coach access
+                    showPlayerPage();
+                }
                 
             } catch (error) {
                 console.error('Error saving answers:', error);
@@ -1516,13 +1538,17 @@
                     backBtn.textContent = '✓ Done';
                     backBtn.onclick = function() {
                         if (confirm('Are you finished updating your information?')) {
-                            window.close();
-                            // Fallback message if window.close() doesn't work
-                            setTimeout(function() {
-                                alert('Your information has been saved! You can close this tab or bookmark this page to return anytime.');
-                            }, 100);
+                            alert('Your information has been saved! You can close this tab or bookmark this page to return anytime.');
                         }
                     };
+                    
+                    // Also modify cancel buttons to prevent navigation
+                    var cancelBtns = document.querySelectorAll('#playerPage .btn-cancel, #goalCornerPage .btn-cancel');
+                    cancelBtns.forEach(function(btn) {
+                        btn.onclick = function() {
+                            showPlayerPage();
+                        };
+                    });
                     
                     // Hide the header on home page so players can't navigate there
                     document.getElementById('homePage').style.display = 'none';
