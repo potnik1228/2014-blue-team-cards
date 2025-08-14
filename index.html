@@ -1387,7 +1387,7 @@
         }
         
         // Player functions
-        async function saveNewPlayer() {
+async function saveNewPlayer() {
             var name = document.getElementById('newPlayerName').value.trim();
             
             if (!name) {
@@ -1404,7 +1404,8 @@
                 cornerKick: '',
                 goalKickComments: '',
                 cornerKickComments: '',
-                needsReview: false
+                needsReview: false,
+                uuid: generateUUID() // Add unique ID
             };
             
             players.push(newPlayer);
@@ -1683,18 +1684,19 @@
                 players[currentPlayerIndex].nickname = nickname;
                 await savePlayersToCloud();
                 
-                // Send email notification
                 await sendUpdateNotification(players[currentPlayerIndex].name, 'position information');
                 
                 alert('Position information saved!');
                 
                 // Check if this is direct player access
                 const urlParams = new URLSearchParams(window.location.search);
-                const isDirectPlayerLink = urlParams.get('player') && urlParams.get('id');
+                const isDirectPlayerLink = urlParams.get('uuid');
                 
                 if (isDirectPlayerLink) {
                     // Stay on player page for direct access
-                    showPlayerPage();
+                    hideAllPages();
+                    document.getElementById('playerPage').className = 'page active';
+                    loadPlayerDetails();
                 } else {
                     // Go to roster for coach access
                     showRoster();
@@ -1715,7 +1717,6 @@
             var goalKick = document.getElementById('goalKickAnswer').value.trim();
             var cornerKick = document.getElementById('cornerKickAnswer').value.trim();
             
-            // Show loading state
             var saveBtn = document.querySelector('#goalCornerPage .btn-save');
             var originalText = saveBtn.textContent;
             saveBtn.textContent = 'Uploading...';
@@ -1725,26 +1726,24 @@
                 players[currentPlayerIndex].goalKick = goalKick;
                 players[currentPlayerIndex].cornerKick = cornerKick;
                 
-                // Mark as needing review if responses were provided
                 if (goalKick || cornerKick) {
                     players[currentPlayerIndex].needsReview = true;
                 }
                 
                 await savePlayersToCloud();
-                
-                // Send email notification
                 await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
                 
-                // Show success message
                 alert('Answers uploaded successfully!');
                 
                 // Check if this is direct player access
                 const urlParams = new URLSearchParams(window.location.search);
-                const isDirectPlayerLink = urlParams.get('player') && urlParams.get('id');
+                const isDirectPlayerLink = urlParams.get('uuid');
                 
                 if (isDirectPlayerLink) {
                     // Stay on player page for direct access
-                    showPlayerPage();
+                    hideAllPages();
+                    document.getElementById('playerPage').className = 'page active';
+                    loadPlayerDetails();
                 } else {
                     // Go to player page for coach access
                     showPlayerPage();
@@ -1754,12 +1753,20 @@
                 console.error('Error saving answers:', error);
                 alert('Error uploading answers. Please try again.');
                 
-                // Reset button
                 saveBtn.textContent = originalText;
                 saveBtn.disabled = false;
             }
         }
         
+        // Generate a random UUID
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0;
+                var v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         // Admin functions
         function displayAdminRoster() {
             var container = document.getElementById('adminRosterList');
@@ -1934,19 +1941,17 @@
             
             // Handle different URL scenarios
             if (baseUrl.includes('about:srcdoc') || baseUrl.includes('blob:')) {
-                // When running in embedded environment, create a generic placeholder
                 baseUrl = 'https://yourserver.com/soccer-cards.html';
             } else {
-                // Remove any existing query params from real URLs
                 baseUrl = baseUrl.split('?')[0];
             }
             
-            var playerLink = baseUrl + '?player=' + encodeURIComponent(player.name) + '&id=' + currentPlayerIndex;
+            // Use UUID instead of player name and index
+            var playerLink = baseUrl + '?uuid=' + player.uuid;
             
             document.getElementById('playerLinkInput').value = playerLink;
             document.getElementById('playerLinkSection').style.display = 'block';
             
-            // Show additional instruction for embedded environment
             if (window.location.href.includes('about:srcdoc') || window.location.href.includes('blob:')) {
                 var instruction = document.createElement('p');
                 instruction.style.cssText = 'margin: 10px 0; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; color: #856404; font-size: 12px;';
@@ -1992,23 +1997,22 @@
         // Check for direct player link on page load
         function checkDirectPlayerAccess() {
             var urlParams = new URLSearchParams(window.location.search);
-            var playerName = urlParams.get('player');
-            var playerId = urlParams.get('id');
+            var playerUUID = urlParams.get('uuid');
             
-            if (playerName && playerId !== null) {
-                var index = parseInt(playerId);
-                if (index >= 0 && index < players.length && players[index].name === playerName) {
-                    currentPlayerIndex = index;
+            if (playerUUID) {
+                // Find player by UUID instead of name/index
+                var playerIndex = players.findIndex(player => player.uuid === playerUUID);
+                
+                if (playerIndex >= 0) {
+                    currentPlayerIndex = playerIndex;
                     
-                    // Hide the home page navigation for direct player access
                     hideAllPages();
                     document.getElementById('playerPage').className = 'page active';
                     loadPlayerDetails();
                     
-                    // Modify the player page for direct access
-                    document.getElementById('playerPageTitle').textContent = players[index].name + ' - Your Soccer Card';
+                    document.getElementById('playerPageTitle').textContent = players[playerIndex].name + ' - Your Soccer Card';
                     
-                    // Change back button to a simple "Done" message
+                    // Update the back button to be a "Done" button
                     var backBtn = document.querySelector('#playerPage .back-btn');
                     backBtn.textContent = '✓ Done';
                     backBtn.onclick = function() {
@@ -2017,18 +2021,29 @@
                         }
                     };
                     
-                    // Also modify cancel buttons to prevent navigation
-                    var cancelBtns = document.querySelectorAll('#playerPage .btn-cancel, #goalCornerPage .btn-cancel');
+                    // Update all cancel buttons to stay on player page for direct access
+                    var cancelBtns = document.querySelectorAll('#playerPage .btn-cancel');
                     cancelBtns.forEach(function(btn) {
                         btn.onclick = function() {
-                            showPlayerPage();
+                            // Stay on player page for direct access
+                            hideAllPages();
+                            document.getElementById('playerPage').className = 'page active';
                         };
                     });
                     
-                    // Hide the header on home page so players can't navigate there
+                    // Update goal/corner page cancel button
+                    var goalCornerCancelBtn = document.querySelector('#goalCornerPage .btn-cancel');
+                    if (goalCornerCancelBtn) {
+                        goalCornerCancelBtn.onclick = function() {
+                            hideAllPages();
+                            document.getElementById('playerPage').className = 'page active';
+                        };
+                    }
+                    
+                    // Hide the home page navigation for direct access
                     document.getElementById('homePage').style.display = 'none';
                     
-                    // Also modify the goal/corner card page back button
+                    // Update the goal/corner card page back button
                     var cardBackBtn = document.querySelector('#goalCornerPage .back-btn');
                     cardBackBtn.onclick = function() {
                         hideAllPages();
