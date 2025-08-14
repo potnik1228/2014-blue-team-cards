@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2014 Blue Team Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .nav-btn {
+            background: white;
+            border: 2px solid #3b82f6;
+            color: #3b82f6;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .nav-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-title {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .btn-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: normal;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin: 20px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        
+        .btn-save {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .roster-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .player-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .player-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .player-item:last-child {
+            border-bottom: none;
+        }
+        
+        .player-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px;
+        }
+        
+        .admin-section {
+            margin: 30px 0;
+            padding: 20px 0;
+        }
+        
+        .admin-info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .admin-info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .admin-info-item strong {
+            color: #333;
+            margin-right: 10px;
+        }
+        
+        .response-item {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .response-item strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .response-text {
+            color: #666;
+            line-height: 1.5;
+            font-style: italic;
+        }
+        
+        .response-text.answered {
+            font-style: normal;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page -->
+    <div id="homePage" class="page active">
+        <div class="header">
+            <h1>2014 Blue Team Cards</h1>
+            <p>Goal and Corner Kick Reference Cards</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="showAddPlayer()">
+                    <div class="btn-title">Add Player</div>
+                    <div class="btn-desc">Add a new player to the roster</div>
+                </button>
+                
+                <button class="nav-btn" onclick="showRoster()">
+                    <div class="btn-title">View Roster</div>
+                    <div class="btn-desc">View all players and select one to edit</div>
+                </button>
+                
+                <button class="nav-btn" onclick="showAdmin()">
+                    <div class="btn-title">Admin</div>
+                    <div class="btn-desc">Manage all player data and responses</div>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Player Page -->
+    <div id="addPlayerPage" class="page">
+        <div class="page-header">
+            <h2>Add New Player</h2>
+            <button class="back-btn" onclick="showHome()">← Back to Home</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label>Player Name</label>
+                <input type="text" id="newPlayerName" placeholder="Enter player name">
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="saveNewPlayer()">Save Player</button>
+                <button class="btn btn-cancel" onclick="showHome()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Roster Page -->
+    <div id="rosterPage" class="page">
+        <div class="page-header">
+            <h2>Team Roster</h2>
+            <button class="back-btn" onclick="showHome()">← Back to Home</button>
+        </div>
+        
+        <div class="roster-list" id="rosterList">
+            <div class="empty-message">No players in roster yet</div>
+        </div>
+    </div>
+    
+    <!-- Admin Page -->
+    <div id="adminPage" class="page">
+        <div class="page-header">
+            <h2>Admin Panel</h2>
+            <button class="back-btn" onclick="showHome()">← Back to Home</button>
+        </div>
+        
+        <div class="roster-list" id="adminRosterList">
+            <div class="empty-message">No players in system yet</div>
+        </div>
+    </div>
+    
+    <!-- Admin Player Detail Page -->
+    <div id="adminPlayerPage" class="page">
+        <div class="page-header">
+            <h2 id="adminPlayerTitle">Player Admin</h2>
+            <button class="back-btn" onclick="showAdmin()">← Back to Admin</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="admin-section">
+                <h3 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">Player Information</h3>
+                <div class="admin-info-grid">
+                    <div class="admin-info-item">
+                        <strong>Name:</strong> <span id="adminPlayerName">-</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <strong>Position Number:</strong> <span id="adminPlayerNumber">-</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <strong>Position Name:</strong> <span id="adminPlayerPosition">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-section">
+                <h3 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">Goal & Corner Kick Card Responses</h3>
+                
+                <div class="response-item">
+                    <strong>Goal Kick: Where should you be on the pitch/field?</strong>
+                    <div class="response-text" id="adminGoalKick">Not answered</div>
+                </div>
+                
+                <div class="response-item">
+                    <strong>Corner Kick (Defending): Where should you be on the pitch/field?</strong>
+                    <div class="response-text" id="adminCornerKick">Not answered</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="generatePlayerLink()">Generate Player Link</button>
+                <button class="btn btn-save" onclick="printPlayerCard()">Print Player Card</button>
+                <button class="btn" onclick="deletePlayerAdmin()" style="background: #ef4444; color: white;">Delete Player</button>
+            </div>
+            
+            <div id="playerLinkSection" style="display: none; margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 8px; border: 2px solid #3b82f6;">
+                <h4 style="color: #3b82f6; margin: 0 0 15px 0;">Direct Player Link</h4>
+                <p style="margin: 10px 0; color: #666; font-size: 14px;">Send this link to the player so they can access their page directly:</p>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="playerLinkInput" readonly style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: white; font-family: monospace; font-size: 14px;">
+                    <button onclick="copyPlayerLink()" style="padding: 10px 15px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Copy</button>
+                </div>
+                <p style="margin: 10px 0 0 0; color: #666; font-size: 12px;">Players can bookmark this link or access it anytime to update their information.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Player Page -->
+    <div id="playerPage" class="page">
+        <div class="page-header">
+            <h2 id="playerPageTitle">Player Details</h2>
+            <button class="back-btn" onclick="showRoster()">← Back to Roster</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label>Player Name</label>
+                <input type="text" id="playerName" readonly style="background: #f5f5f5;">
+            </div>
+            
+            <div class="form-group">
+                <label>Position Number</label>
+                <input type="text" id="playerNumber" placeholder="Enter position number (1-11)">
+            </div>
+            
+            <div class="form-group">
+                <label>Position Name</label>
+                <input type="text" id="playerPosition" placeholder="Enter position name">
+            </div>
+            
+            <div style="margin: 30px 0;">
+                <h3 style="color: #333; margin-bottom: 15px;">Available Questionnaires</h3>
+                <button class="nav-btn" onclick="showGoalCornerCard()" style="margin: 0; width: 100%;">
+                    <div class="btn-title">Goal & Corner Kick Card</div>
+                    <div class="btn-desc">Set positioning for goal kicks and corner kick defense</div>
+                </button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="savePlayerDetails()">Save Position Info</button>
+                <button class="btn btn-cancel" onclick="showRoster()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Goal & Corner Kick Card Page -->
+    <div id="goalCornerPage" class="page">
+        <div class="page-header">
+            <h2 id="cardPageTitle">Goal & Corner Kick Card</h2>
+            <button class="back-btn" onclick="showPlayerPage()">← Back to Player</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label>Goal Kick: Where should you be on the pitch/field?</label>
+                <textarea id="goalKickAnswer" rows="4" placeholder="Describe your positioning during goal kicks..." style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Corner Kick (Defending): Where should you be on the pitch/field?</label>
+                <textarea id="cornerKickAnswer" rows="4" placeholder="Describe your positioning when defending corner kicks..." style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="saveCardAnswers()">Save Answers</button>
+                <button class="btn btn-cancel" onclick="showPlayerPage()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var players = [];
+        var currentPlayerIndex = -1;
+        
+        // Navigation functions
+        function showHome() {
+            hideAllPages();
+            document.getElementById('homePage').className = 'page active';
+        }
+        
+        function showAddPlayer() {
+            hideAllPages();
+            document.getElementById('addPlayerPage').className = 'page active';
+            document.getElementById('newPlayerName').value = '';
+        }
+        
+        function showRoster() {
+            hideAllPages();
+            document.getElementById('rosterPage').className = 'page active';
+            displayRoster();
+        }
+        
+        function showAdmin() {
+            hideAllPages();
+            document.getElementById('adminPage').className = 'page active';
+            displayAdminRoster();
+        }
+        
+        function showAdminPlayer() {
+            hideAllPages();
+            document.getElementById('adminPlayerPage').className = 'page active';
+            if (currentPlayerIndex >= 0) {
+                loadAdminPlayerDetails();
+            }
+        }
+        
+        function showPlayerPage() {
+            hideAllPages();
+            document.getElementById('playerPage').className = 'page active';
+            if (currentPlayerIndex >= 0) {
+                loadPlayerDetails();
+            }
+        }
+        
+        function showGoalCornerCard() {
+            hideAllPages();
+            document.getElementById('goalCornerPage').className = 'page active';
+            if (currentPlayerIndex >= 0) {
+                loadCardAnswers();
+            }
+        }
+        
+        function hideAllPages() {
+            var pages = document.getElementsByClassName('page');
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].className = 'page';
+            }
+        }
+        
+        // Player functions
+        function saveNewPlayer() {
+            var name = document.getElementById('newPlayerName').value.trim();
+            
+            if (!name) {
+                alert('Please enter a player name');
+                return;
+            }
+            
+            var newPlayer = {
+                name: name,
+                number: '',
+                position: '',
+                goalKick: '',
+                cornerKick: ''
+            };
+            
+            players.push(newPlayer);
+            alert('Player "' + name + '" added successfully!');
+            showHome();
+        }
+        
+        function displayRoster() {
+            var container = document.getElementById('rosterList');
+            
+            if (players.length === 0) {
+                container.innerHTML = '<div class="empty-message">No players in roster yet</div>';
+                return;
+            }
+            
+            var html = '';
+            for (var i = 0; i < players.length; i++) {
+                var player = players[i];
+                html += '<div class="player-item" onclick="selectPlayer(' + i + ')">';
+                html += '<div>';
+                html += '<div class="player-name">' + player.name + '</div>';
+                if (player.number && player.position) {
+                    html += '<div style="color: #3b82f6; font-weight: bold;">#' + player.number + ' - ' + player.position + '</div>';
+                } else {
+                    html += '<div style="color: #999;">Position not set</div>';
+                }
+                html += '</div>';
+                html += '<div style="color: #3b82f6;">→</div>';
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function selectPlayer(index) {
+            currentPlayerIndex = index;
+            showPlayerPage();
+        }
+        
+        function loadPlayerDetails() {
+            var player = players[currentPlayerIndex];
+            document.getElementById('playerPageTitle').textContent = player.name + ' - Details';
+            document.getElementById('playerName').value = player.name;
+            document.getElementById('playerNumber').value = player.number;
+            document.getElementById('playerPosition').value = player.position;
+        }
+        
+        function savePlayerDetails() {
+            var number = document.getElementById('playerNumber').value.trim();
+            var position = document.getElementById('playerPosition').value.trim();
+            
+            if (number && position) {
+                players[currentPlayerIndex].number = number;
+                players[currentPlayerIndex].position = position;
+                alert('Position information saved!');
+                showRoster();
+            } else {
+                alert('Please fill in both position number and position name');
+            }
+        }
+        
+        function loadCardAnswers() {
+            var player = players[currentPlayerIndex];
+            document.getElementById('cardPageTitle').textContent = player.name + ' - Goal & Corner Kick Card';
+            document.getElementById('goalKickAnswer').value = player.goalKick;
+            document.getElementById('cornerKickAnswer').value = player.cornerKick;
+        }
+        
+        function saveCardAnswers() {
+            var goalKick = document.getElementById('goalKickAnswer').value.trim();
+            var cornerKick = document.getElementById('cornerKickAnswer').value.trim();
+            
+            players[currentPlayerIndex].goalKick = goalKick;
+            players[currentPlayerIndex].cornerKick = cornerKick;
+            
+            alert('Card answers saved!');
+            showPlayerPage();
+        }
+        
+        // Admin functions
+        function displayAdminRoster() {
+            var container = document.getElementById('adminRosterList');
+            
+            if (players.length === 0) {
+                container.innerHTML = '<div class="empty-message">No players in system yet</div>';
+                return;
+            }
+            
+            var html = '';
+            for (var i = 0; i < players.length; i++) {
+                var player = players[i];
+                var hasResponses = player.goalKick || player.cornerKick;
+                
+                html += '<div class="player-item" onclick="selectAdminPlayer(' + i + ')">';
+                html += '<div>';
+                html += '<div class="player-name">' + player.name + '</div>';
+                
+                var statusLine = '';
+                if (player.number && player.position) {
+                    statusLine += '#' + player.number + ' - ' + player.position;
+                } else {
+                    statusLine += 'Position not set';
+                }
+                
+                if (hasResponses) {
+                    statusLine += ' • Has responses';
+                } else {
+                    statusLine += ' • No responses';
+                }
+                
+                html += '<div style="color: #666; font-size: 14px;">' + statusLine + '</div>';
+                html += '</div>';
+                html += '<div style="color: #3b82f6;">→</div>';
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function selectAdminPlayer(index) {
+            currentPlayerIndex = index;
+            showAdminPlayer();
+        }
+        
+        function loadAdminPlayerDetails() {
+            var player = players[currentPlayerIndex];
+            
+            document.getElementById('adminPlayerTitle').textContent = 'Admin: ' + player.name;
+            document.getElementById('adminPlayerName').textContent = player.name;
+            document.getElementById('adminPlayerNumber').textContent = player.number || 'Not set';
+            document.getElementById('adminPlayerPosition').textContent = player.position || 'Not set';
+            
+            var goalKickElement = document.getElementById('adminGoalKick');
+            var cornerKickElement = document.getElementById('adminCornerKick');
+            
+            if (player.goalKick) {
+                goalKickElement.textContent = player.goalKick;
+                goalKickElement.className = 'response-text answered';
+            } else {
+                goalKickElement.textContent = 'Not answered';
+                goalKickElement.className = 'response-text';
+            }
+            
+            if (player.cornerKick) {
+                cornerKickElement.textContent = player.cornerKick;
+                cornerKickElement.className = 'response-text answered';
+            } else {
+                cornerKickElement.textContent = 'Not answered';
+                cornerKickElement.className = 'response-text';
+            }
+        }
+        
+        function printPlayerCard() {
+            alert('Print functionality coming soon!');
+        }
+        
+        function deletePlayerAdmin() {
+            var player = players[currentPlayerIndex];
+            if (confirm('Are you sure you want to delete ' + player.name + '? This cannot be undone.')) {
+                players.splice(currentPlayerIndex, 1);
+                alert('Player deleted successfully');
+                showAdmin();
+            }
+        }
+        
+        function generatePlayerLink() {
+            var player = players[currentPlayerIndex];
+            var baseUrl = window.location.href;
+            
+            // Handle different URL scenarios
+            if (baseUrl.includes('about:srcdoc') || baseUrl.includes('blob:')) {
+                // When running in embedded environment, create a generic placeholder
+                baseUrl = 'https://yourserver.com/soccer-cards.html';
+            } else {
+                // Remove any existing query params from real URLs
+                baseUrl = baseUrl.split('?')[0];
+            }
+            
+            var playerLink = baseUrl + '?player=' + encodeURIComponent(player.name) + '&id=' + currentPlayerIndex;
+            
+            document.getElementById('playerLinkInput').value = playerLink;
+            document.getElementById('playerLinkSection').style.display = 'block';
+            
+            // Show additional instruction for embedded environment
+            if (window.location.href.includes('about:srcdoc') || window.location.href.includes('blob:')) {
+                var instruction = document.createElement('p');
+                instruction.style.cssText = 'margin: 10px 0; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; color: #856404; font-size: 12px;';
+                instruction.innerHTML = '<strong>Note:</strong> Replace "yourserver.com/soccer-cards.html" with your actual website URL when you deploy this file.';
+                document.getElementById('playerLinkSection').appendChild(instruction);
+            }
+        }
+        
+        function copyPlayerLink() {
+            var linkInput = document.getElementById('playerLinkInput');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                alert('Link copied to clipboard!');
+            } catch (err) {
+                alert('Unable to copy automatically. Please select and copy the link manually.');
+            }
+        }
+        
+        // Check for direct player link on page load
+        function checkDirectPlayerAccess() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var playerName = urlParams.get('player');
+            var playerId = urlParams.get('id');
+            
+            if (playerName && playerId !== null) {
+                var index = parseInt(playerId);
+                if (index >= 0 && index < players.length && players[index].name === playerName) {
+                    currentPlayerIndex = index;
+                    showPlayerPage();
+                    
+                    // Update page title to show this is a direct player access
+                    document.getElementById('playerPageTitle').textContent = players[index].name + ' - Your Page';
+                    
+                    // Change back button to go to a simple "done" action
+                    var backBtn = document.querySelector('#playerPage .back-btn');
+                    backBtn.textContent = '← Done';
+                    backBtn.onclick = function() {
+                        alert('Thank you! You can bookmark this page to return anytime.');
+                    };
+                } else {
+                    alert('Invalid player link. Please contact your coach for a new link.');
+                }
+            }
+        }
+        
+        // Load players and check for direct access when page loads
+        window.addEventListener('load', function() {
+            checkDirectPlayerAccess();
+        });
+    </script>
+</body>
+</html>
