@@ -1013,7 +1013,9 @@
         }
         
         // Initialize EmailJS
-        emailjs.init("WMglO50YF0-hrJ9EL");; // Replace with your EmailJS User ID
+        emailjs.init({
+            publicKey: "WMglO50YF0-hrJ9EL",
+        });
         
         var players = [];
         var coaches = [];
