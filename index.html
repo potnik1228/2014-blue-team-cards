@@ -1187,6 +1187,7 @@
         function showHome() {
             hideAllPages();
             document.getElementById('homePage').className = 'page active';
+            updateNavigationCounters(); // Add this line
         }
         
         function showAddPlayer() {
@@ -1321,6 +1322,85 @@
             }
         }
 
+        function updateNavigationCounters() {
+            // Count players and coaches
+            const playerCount = players.length;
+            const coachCount = coaches.length;
+            
+            // Count players needing review
+            const playersNeedingReview = players.filter(player => player.needsReview).length;
+            
+            // Count players with no responses
+            const playersWithoutResponses = players.filter(player => !player.goalKick && !player.cornerKick).length;
+            
+            // Count players missing position info
+            const playersMissingInfo = players.filter(player => !player.number || !player.position).length;
+            
+            // Update View Roster button
+            const rosterBtn = document.querySelector('.nav-btn[onclick="showRoster()"]');
+            if (rosterBtn) {
+                const titleDiv = rosterBtn.querySelector('.btn-title');
+                const descDiv = rosterBtn.querySelector('.btn-desc');
+                
+                titleDiv.textContent = `View Roster (${playerCount} players, ${coachCount} coaches)`;
+                
+                let statusText = 'View all players and select one to edit';
+                if (playersNeedingReview > 0) {
+                    statusText += ` • ${playersNeedingReview} need review`;
+                }
+                if (playersWithoutResponses > 0) {
+                    statusText += ` • ${playersWithoutResponses} no responses`;
+                }
+                if (playersMissingInfo > 0) {
+                    statusText += ` • ${playersMissingInfo} missing info`;
+                }
+                
+                descDiv.textContent = statusText;
+                
+                // Add visual indicator if action needed
+                if (playersNeedingReview > 0 || playersWithoutResponses > 0 || playersMissingInfo > 0) {
+                    rosterBtn.style.borderLeft = '6px solid #f59e0b'; // Orange border for attention
+                } else {
+                    rosterBtn.style.borderLeft = ''; // Remove border if all good
+                }
+            }
+            
+            // Update Admin button
+            const adminBtn = document.querySelector('.nav-btn[onclick="showAdmin()"]');
+            if (adminBtn) {
+                const titleDiv = adminBtn.querySelector('.btn-title');
+                const descDiv = adminBtn.querySelector('.btn-desc');
+                
+                titleDiv.textContent = `Admin (${playerCount + coachCount} total)`;
+                
+                let adminStatus = 'Manage all player data and responses';
+                const totalIssues = playersNeedingReview + playersWithoutResponses + playersMissingInfo;
+                if (totalIssues > 0) {
+                    adminStatus += ` • ${totalIssues} items need attention`;
+                    adminBtn.style.borderLeft = '6px solid #ef4444'; // Red border for admin attention
+                } else {
+                    adminStatus += ' • All players complete ✓';
+                    adminBtn.style.borderLeft = '6px solid #10b981'; // Green border for all good
+                }
+                
+                descDiv.textContent = adminStatus;
+            }
+            
+            // Update Add Player button
+            const addPlayerBtn = document.querySelector('.nav-btn[onclick="showAddPlayer()"]');
+            if (addPlayerBtn) {
+                const titleDiv = addPlayerBtn.querySelector('.btn-title');
+                titleDiv.textContent = `Add Player (${playerCount} current)`;
+            }
+            
+            // Update Add Coach button  
+            const addCoachBtn = document.querySelector('.nav-btn[onclick="showAddCoach()"]');
+            if (addCoachBtn) {
+                const titleDiv = addCoachBtn.querySelector('.btn-title');
+                titleDiv.textContent = `Add Coach (${coachCount} current)`;
+            }
+        }
+        
         function loadAdminCoachDetails() {
             var coach = coaches[currentCoachIndex];
             
@@ -1383,6 +1463,7 @@
             await savePlayersToCloud();
             alert('Coach "' + name + '" added successfully!');
             showHome();
+            updateNavigationCounters(); // Add this line
         }
 
         async function deleteCoachAdmin() {
@@ -1396,7 +1477,7 @@
         }
         
         // Player functions
-async function saveNewPlayer() {
+        async function saveNewPlayer() {
             var name = document.getElementById('newPlayerName').value.trim();
             
             if (!name) {
@@ -1414,13 +1495,14 @@ async function saveNewPlayer() {
                 goalKickComments: '',
                 cornerKickComments: '',
                 needsReview: false,
-                uuid: generateUUID() // Add unique ID
+                uuid: generateUUID()
             };
             
             players.push(newPlayer);
             await savePlayersToCloud();
             alert('Player "' + name + '" added successfully!');
             showHome();
+            updateNavigationCounters(); // Add this line
         }
         
         function displayRoster() {
@@ -2077,6 +2159,7 @@ async function saveNewPlayer() {
         window.addEventListener('load', async function() {
             await loadPlayersFromCloud();
             checkDirectPlayerAccess();
+            updateNavigationCounters(); // Add this line
             
             // Refresh displays if we're on a page that shows players
             if (document.getElementById('rosterPage').classList.contains('active')) {
