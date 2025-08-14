@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>2014 Blue Team Cards</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -424,8 +429,82 @@
     </div>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcH2sW8OR2IkL5MKWSvP8VRKRQeP__i0",
+            authDomain: "blue-team-cards.firebaseapp.com",
+            projectId: "blue-team-cards",
+            storageBucket: "blue-team-cards.firebasestorage.app",
+            messagingSenderId: "100271159843",
+            appId: "1:100271159843:web:277972689ce7117bfbe45"
+        };
+        
+        // Initialize Firebase
+        let db;
+        let firebaseReady = false;
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            firebaseReady = true;
+            console.log('Firebase connected successfully');
+        } catch (error) {
+            console.log('Firebase not configured yet, using local storage');
+            firebaseReady = false;
+        }
+        
         var players = [];
         var currentPlayerIndex = -1;
+        
+        // Data persistence functions
+        async function savePlayersToCloud() {
+            if (!firebaseReady) {
+                // Fallback to localStorage
+                localStorage.setItem('soccerPlayers', JSON.stringify(players));
+                return;
+            }
+            
+            try {
+                await db.collection('teams').doc('2014-blue').set({
+                    players: players,
+                    lastUpdated: new Date()
+                });
+                console.log('Data saved to cloud');
+            } catch (error) {
+                console.error('Error saving to cloud:', error);
+                // Fallback to localStorage
+                localStorage.setItem('soccerPlayers', JSON.stringify(players));
+            }
+        }
+        
+        async function loadPlayersFromCloud() {
+            if (!firebaseReady) {
+                // Fallback to localStorage
+                const saved = localStorage.getItem('soccerPlayers');
+                if (saved) {
+                    players = JSON.parse(saved);
+                }
+                return;
+            }
+            
+            try {
+                const doc = await db.collection('teams').doc('2014-blue').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    players = data.players || [];
+                    console.log('Data loaded from cloud');
+                } else {
+                    console.log('No cloud data found, starting fresh');
+                }
+            } catch (error) {
+                console.error('Error loading from cloud:', error);
+                // Fallback to localStorage
+                const saved = localStorage.getItem('soccerPlayers');
+                if (saved) {
+                    players = JSON.parse(saved);
+                }
+            }
+        }
         
         // Navigation functions
         function showHome() {
@@ -483,7 +562,7 @@
         }
         
         // Player functions
-        function saveNewPlayer() {
+        async function saveNewPlayer() {
             var name = document.getElementById('newPlayerName').value.trim();
             
             if (!name) {
@@ -500,6 +579,7 @@
             };
             
             players.push(newPlayer);
+            await savePlayersToCloud();
             alert('Player "' + name + '" added successfully!');
             showHome();
         }
@@ -544,13 +624,14 @@
             document.getElementById('playerPosition').value = player.position;
         }
         
-        function savePlayerDetails() {
+        async function savePlayerDetails() {
             var number = document.getElementById('playerNumber').value.trim();
             var position = document.getElementById('playerPosition').value.trim();
             
             if (number && position) {
                 players[currentPlayerIndex].number = number;
                 players[currentPlayerIndex].position = position;
+                await savePlayersToCloud();
                 alert('Position information saved!');
                 showRoster();
             } else {
@@ -565,13 +646,14 @@
             document.getElementById('cornerKickAnswer').value = player.cornerKick;
         }
         
-        function saveCardAnswers() {
+        async function saveCardAnswers() {
             var goalKick = document.getElementById('goalKickAnswer').value.trim();
             var cornerKick = document.getElementById('cornerKickAnswer').value.trim();
             
             players[currentPlayerIndex].goalKick = goalKick;
             players[currentPlayerIndex].cornerKick = cornerKick;
             
+            await savePlayersToCloud();
             alert('Card answers saved!');
             showPlayerPage();
         }
@@ -653,10 +735,11 @@
             alert('Print functionality coming soon!');
         }
         
-        function deletePlayerAdmin() {
+        async function deletePlayerAdmin() {
             var player = players[currentPlayerIndex];
             if (confirm('Are you sure you want to delete ' + player.name + '? This cannot be undone.')) {
                 players.splice(currentPlayerIndex, 1);
+                await savePlayersToCloud();
                 alert('Player deleted successfully');
                 showAdmin();
             }
@@ -730,8 +813,17 @@
         }
         
         // Load players and check for direct access when page loads
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async function() {
+            await loadPlayersFromCloud();
             checkDirectPlayerAccess();
+            
+            // Refresh displays if we're on a page that shows players
+            if (document.getElementById('rosterPage').classList.contains('active')) {
+                displayRoster();
+            }
+            if (document.getElementById('adminPage').classList.contains('active')) {
+                displayAdminRoster();
+            }
         });
     </script>
 </body>
