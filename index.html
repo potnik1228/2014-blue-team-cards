@@ -523,6 +523,11 @@
             </div>
             
             <div class="form-group">
+                <label>Nickname (Optional)</label>
+                <input type="text" id="playerNickname" placeholder="What do your teammates call you?">
+            </div>
+            
+            <div class="form-group">
                 <label>Position Number</label>
                 <input type="text" id="playerNumber" placeholder="Enter position number (1-11)">
             </div>
@@ -540,13 +545,21 @@
                 </button>
             </div>
             
+            <!-- Review Status Display for Player -->
+            <div class="admin-section" id="playerReviewStatus" style="display: none;">
+                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #3b82f6; margin: 0 0 10px 0;">Coach Review Status</h4>
+                    <div id="playerReviewStatusText" style="font-weight: bold;"></div>
+                </div>
+            </div>
+            
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn btn-save" onclick="savePlayerDetails()">Save Position Info</button>
                 <button class="btn btn-cancel" onclick="showRoster()">Cancel</button>
             </div>
         </div>
     </div>
-    
+        
     <!-- Player Read-Only Page -->
     <div id="playerReadOnlyPage" class="page">
         <div class="page-header">
@@ -560,6 +573,9 @@
                 <div class="admin-info-grid">
                     <div class="admin-info-item">
                         <strong>Name:</strong> <span id="readOnlyPlayerName">-</span>
+                    </div>
+                    <div class="admin-info-item" id="readOnlyNicknameItem" style="display: none;">
+                        <strong>Nickname:</strong> <span id="readOnlyPlayerNickname">-</span>
                     </div>
                     <div class="admin-info-item">
                         <strong>Position Number:</strong> <span id="readOnlyPlayerNumber">-</span>
@@ -978,6 +994,7 @@
             
             var newPlayer = {
                 name: name,
+                nickname: '',
                 number: '',
                 position: '',
                 goalKick: '',
@@ -1111,8 +1128,12 @@
             var player = players[currentPlayerIndex];
             document.getElementById('playerPageTitle').textContent = player.name + ' - Details';
             document.getElementById('playerName').value = player.name;
+            document.getElementById('playerNickname').value = player.nickname || '';
             document.getElementById('playerNumber').value = player.number;
             document.getElementById('playerPosition').value = player.position;
+            
+            // Show review status for player
+            updatePlayerReviewStatus();
         }
         
         function loadPlayerReadOnlyDetails() {
@@ -1122,6 +1143,16 @@
             document.getElementById('readOnlyPlayerName').textContent = player.name;
             document.getElementById('readOnlyPlayerNumber').textContent = player.number || 'Not set';
             document.getElementById('readOnlyPlayerPosition').textContent = player.position || 'Not set';
+            
+            // Show nickname if it exists
+            var nicknameItem = document.getElementById('readOnlyNicknameItem');
+            var nicknameSpan = document.getElementById('readOnlyPlayerNickname');
+            if (player.nickname) {
+                nicknameSpan.textContent = player.nickname;
+                nicknameItem.style.display = 'block';
+            } else {
+                nicknameItem.style.display = 'none';
+            }
             
             var goalKickElement = document.getElementById('readOnlyGoalKick');
             var cornerKickElement = document.getElementById('readOnlyCornerKick');
@@ -1142,7 +1173,7 @@
                 cornerKickElement.className = 'response-text';
             }
 
-                // Update review status display
+            // Update review status display
             updateReviewStatusDisplay();
         }
 
@@ -1174,6 +1205,29 @@
             }
         }
 
+        function updatePlayerReviewStatus() {
+            var player = players[currentPlayerIndex];
+            var reviewStatusSection = document.getElementById('playerReviewStatus');
+            var reviewStatusText = document.getElementById('playerReviewStatusText');
+            
+            // Only show if player has responses
+            var hasResponses = player.goalKick || player.cornerKick;
+            if (!hasResponses) {
+                reviewStatusSection.style.display = 'none';
+                return;
+            }
+            
+            reviewStatusSection.style.display = 'block';
+            
+            if (player.needsReview) {
+                reviewStatusText.textContent = '⏳ Your responses are waiting for coach review';
+                reviewStatusText.style.color = '#f59e0b';
+            } else {
+                reviewStatusText.textContent = '✅ Your responses have been reviewed by your coach!';
+                reviewStatusText.style.color = '#10b981';
+            }
+        }
+
         async function togglePlayerReview() {
             var player = players[currentPlayerIndex];
             
@@ -1196,10 +1250,12 @@
         async function savePlayerDetails() {
             var number = document.getElementById('playerNumber').value.trim();
             var position = document.getElementById('playerPosition').value.trim();
+            var nickname = document.getElementById('playerNickname').value.trim();
             
             if (number && position) {
                 players[currentPlayerIndex].number = number;
                 players[currentPlayerIndex].position = position;
+                players[currentPlayerIndex].nickname = nickname;
                 await savePlayersToCloud();
                 
                 // Send email notification
