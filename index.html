@@ -1024,12 +1024,17 @@
         
         // Email notification function
         async function sendUpdateNotification(playerName, updateType) {
+            console.log('Attempting to send email notification...');
+            console.log('Coaches:', coaches);
+            
             if (coaches.length === 0) {
                 console.log('No coaches to notify');
                 return;
             }
             
             const coachEmails = coaches.filter(coach => coach.email).map(coach => coach.email);
+            console.log('Coach emails found:', coachEmails);
+            
             if (coachEmails.length === 0) {
                 console.log('No coach emails available');
                 return;
@@ -1040,12 +1045,14 @@
                 player_name: playerName,
                 update_type: updateType,
                 timestamp: new Date().toLocaleString(),
-                to_email: coachEmails[0] // Primary coach email
+                to_email: coachEmails[0]
             };
             
+            console.log('Sending email with params:', templateParams);
+            
             try {
-                await emailjs.send('service_jf13wao', 'template_6bruddy', templateParams);
-                console.log('Email notification sent successfully');
+                const result = await emailjs.send('service_jf13wao', 'template_6bruddy', templateParams);
+                console.log('Email notification sent successfully:', result);
             } catch (error) {
                 console.error('Failed to send email notification:', error);
             }
