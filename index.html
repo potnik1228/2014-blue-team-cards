@@ -297,16 +297,16 @@
             }
             
             .btn-save {
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
                 color: white;
-                border-color: #10b981;
-                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                border-color: #3b82f6;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
             }
-            
+
             .btn-save:hover {
-                background: linear-gradient(135deg, #059669 0%, #047857 100%);
-                border-color: #059669;
-                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+                background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+                border-color: #1e40af;
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
                 transform: translateY(-3px);
             }
             
@@ -1013,7 +1013,7 @@
         }
         
         // Initialize EmailJS
-        emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your EmailJS User ID
+        emailjs.init("WMglO50YF0-hrJ9EL");; // Replace with your EmailJS User ID
         
         var players = [];
         var coaches = [];
@@ -1036,15 +1036,15 @@
             }
             
             const templateParams = {
+                team_name: 'Sierra Surf 2014b Blue Pre-NPL',
                 player_name: playerName,
                 update_type: updateType,
-                team_name: '2014 Blue Team',
-                to_email: coachEmails.join(', '),
-                timestamp: new Date().toLocaleString()
+                timestamp: new Date().toLocaleString(),
+                to_email: coachEmails[0] // Primary coach email
             };
             
             try {
-                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+                await emailjs.send('service_jf13wao', 'template_6bruddy', templateParams);
                 console.log('Email notification sent successfully');
             } catch (error) {
                 console.error('Failed to send email notification:', error);
@@ -2008,8 +2008,17 @@ async function saveNewPlayer() {
                     
                     hideAllPages();
                     document.getElementById('playerPage').className = 'page active';
+                    
+                    // Add the blue header with logo to the player page
+                    var pageContent = document.getElementById('playerPage');
+                    if (!pageContent.querySelector('.header')) {
+                        var existingContent = pageContent.innerHTML;
+                        pageContent.innerHTML = createPageHeader('Player Details', 'Update your position and card information') + existingContent;
+                    }
+                    
                     loadPlayerDetails();
                     
+                    // Update the title to show player's name
                     document.getElementById('playerPageTitle').textContent = players[playerIndex].name + ' - Your Soccer Card';
                     
                     // Update the back button to be a "Done" button
@@ -2025,7 +2034,6 @@ async function saveNewPlayer() {
                     var cancelBtns = document.querySelectorAll('#playerPage .btn-cancel');
                     cancelBtns.forEach(function(btn) {
                         btn.onclick = function() {
-                            // Stay on player page for direct access
                             hideAllPages();
                             document.getElementById('playerPage').className = 'page active';
                         };
