@@ -3,6 +3,7 @@
 <head>
     <title>2014 Blue Team Cards</title>
 
+    <script src="firebase-config.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -620,15 +621,9 @@
 
     <script>
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBcH2sW8OR2IkL5MKWsSvP8VRKROeP__i0",
-            authDomain: "blue-team-cards.firebaseapp.com",
-            projectId: "blue-team-cards",
-            storageBucket: "blue-team-cards.firebasestorage.app",
-            messagingSenderId: "1002711590432",
-            appId: "1:1002711590432:web:2779726689ce7117bfbe45"
-        };
+        
+        // Firebase config loaded from external file
+        const firebaseConfig = window.firebaseConfig;
         
         // Initialize Firebase
 
