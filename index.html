@@ -7,12 +7,44 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
+        }
+        
+        // Email notification function
+        async function sendUpdateNotification(playerName, updateType) {
+            if (coaches.length === 0) {
+                console.log('No coaches to notify');
+                return;
+            }
+            
+            const coachEmails = coaches.filter(coach => coach.email).map(coach => coach.email);
+            if (coachEmails.length === 0) {
+                console.log('No coach emails available');
+                return;
+            }
+            
+            const templateParams = {
+                player_name: playerName,
+                update_type: updateType,
+                team_name: '2014 Blue Team',
+                to_email: coachEmails.join(', '),
+                timestamp: new Date().toLocaleString()
+            };
+            
+            try {
+                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+                console.log('Email notification sent successfully');
+            } catch (error) {
+                console.error('Failed to send email notification:', error);
+            }
         }
         
         .header {
@@ -258,6 +290,11 @@
                     <div class="btn-desc">View all players and select one to edit</div>
                 </button>
                 
+                <button class="nav-btn" onclick="showAddCoach()">
+                    <div class="btn-title">Add Coach</div>
+                    <div class="btn-desc">Add coaching staff to the system</div>
+                </button>
+                
                 <button class="nav-btn" onclick="showAdmin()">
                     <div class="btn-title">Admin</div>
                     <div class="btn-desc">Manage all player data and responses</div>
@@ -295,6 +332,36 @@
         
         <div class="roster-list" id="rosterList">
             <div class="empty-message">No players in roster yet</div>
+        </div>
+    </div>
+    
+    <!-- Add Coach Page -->
+    <div id="addCoachPage" class="page">
+        <div class="page-header">
+            <h2>Add New Coach</h2>
+            <button class="back-btn" onclick="showHome()">← Back to Home</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label>Coach Name</label>
+                <input type="text" id="newCoachName" placeholder="Enter coach name">
+            </div>
+            
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" id="coachRole" placeholder="Head Coach, Assistant Coach, etc.">
+            </div>
+            
+            <div class="form-group">
+                <label>Email (Optional)</label>
+                <input type="email" id="coachEmail" placeholder="coach@email.com">
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="saveNewCoach()">Save Coach</button>
+                <button class="btn btn-cancel" onclick="showHome()">Cancel</button>
+            </div>
         </div>
     </div>
     
@@ -453,7 +520,11 @@
             firebaseReady = false;
         }
         
+        // Initialize EmailJS
+        emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your EmailJS User ID
+        
         var players = [];
+        var coaches = [];
         var currentPlayerIndex = -1;
         
         // Data persistence functions
@@ -467,6 +538,7 @@
             try {
                 await db.collection('teams').doc('2014-blue').set({
                     players: players,
+                    coaches: coaches,
                     lastUpdated: new Date()
                 });
                 console.log('Data saved to cloud');
@@ -474,6 +546,7 @@
                 console.error('Error saving to cloud:', error);
                 // Fallback to localStorage
                 localStorage.setItem('soccerPlayers', JSON.stringify(players));
+                localStorage.setItem('soccerCoaches', JSON.stringify(coaches));
             }
         }
         
@@ -492,6 +565,7 @@
                 if (doc.exists) {
                     const data = doc.data();
                     players = data.players || [];
+                    coaches = data.coaches || [];
                     console.log('Data loaded from cloud');
                 } else {
                     console.log('No cloud data found, starting fresh');
@@ -499,10 +573,10 @@
             } catch (error) {
                 console.error('Error loading from cloud:', error);
                 // Fallback to localStorage
-                const saved = localStorage.getItem('soccerPlayers');
-                if (saved) {
-                    players = JSON.parse(saved);
-                }
+                const savedPlayers = localStorage.getItem('soccerPlayers');
+                const savedCoaches = localStorage.getItem('soccerCoaches');
+                if (savedPlayers) players = JSON.parse(savedPlayers);
+                if (savedCoaches) coaches = JSON.parse(savedCoaches);
             }
         }
         
@@ -522,6 +596,14 @@
             hideAllPages();
             document.getElementById('rosterPage').className = 'page active';
             displayRoster();
+        }
+        
+        function showAddCoach() {
+            hideAllPages();
+            document.getElementById('addCoachPage').className = 'page active';
+            document.getElementById('newCoachName').value = '';
+            document.getElementById('coachRole').value = '';
+            document.getElementById('coachEmail').value = '';
         }
         
         function showAdmin() {
@@ -559,6 +641,30 @@
             for (var i = 0; i < pages.length; i++) {
                 pages[i].className = 'page';
             }
+        }
+        
+        // Coach functions
+        async function saveNewCoach() {
+            var name = document.getElementById('newCoachName').value.trim();
+            var role = document.getElementById('coachRole').value.trim();
+            var email = document.getElementById('coachEmail').value.trim();
+            
+            if (!name) {
+                alert('Please enter a coach name');
+                return;
+            }
+            
+            var newCoach = {
+                name: name,
+                role: role || 'Coach',
+                email: email,
+                addedDate: new Date().toISOString().split('T')[0]
+            };
+            
+            coaches.push(newCoach);
+            await savePlayersToCloud();
+            alert('Coach "' + name + '" added successfully!');
+            showHome();
         }
         
         // Player functions
@@ -632,6 +738,10 @@
                 players[currentPlayerIndex].number = number;
                 players[currentPlayerIndex].position = position;
                 await savePlayersToCloud();
+                
+                // Send email notification
+                await sendUpdateNotification(players[currentPlayerIndex].name, 'position information');
+                
                 alert('Position information saved!');
                 showRoster();
             } else {
@@ -654,6 +764,10 @@
             players[currentPlayerIndex].cornerKick = cornerKick;
             
             await savePlayersToCloud();
+            
+            // Send email notification
+            await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
+            
             alert('Card answers saved!');
             showPlayerPage();
         }
@@ -808,7 +922,13 @@
                     var backBtn = document.querySelector('#playerPage .back-btn');
                     backBtn.textContent = '✓ Done';
                     backBtn.onclick = function() {
-                        alert('Your information has been saved! You can bookmark this page to return anytime.');
+                        if (confirm('Are you finished updating your information?')) {
+                            window.close();
+                            // Fallback message if window.close() doesn't work
+                            setTimeout(function() {
+                                alert('Your information has been saved! You can close this tab or bookmark this page to return anytime.');
+                            }, 100);
+                        }
                     };
                     
                     // Hide the header on home page so players can't navigate there
