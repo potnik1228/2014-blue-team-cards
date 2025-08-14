@@ -1041,12 +1041,19 @@
                 return;
             }
             
+            // Get the current app URL
+            var appUrl = window.location.href;
+            if (appUrl.includes('?')) {
+                appUrl = appUrl.split('?')[0]; // Remove any query parameters
+            }
+            
             const templateParams = {
                 team_name: 'Sierra Surf 2014b Blue Pre-NPL',
                 player_name: playerName,
                 update_type: updateType,
                 timestamp: new Date().toLocaleString(),
-                to_email: coachEmails[0]
+                to_email: coachEmails[0],
+                app_link: appUrl // Add the app link
             };
             
             console.log('Sending email with params:', templateParams);
@@ -1763,7 +1770,7 @@
             await saveQuestionnaireReview();
         }
 
-        async function savePlayerDetails() {
+async function savePlayerDetails() {
             var number = document.getElementById('playerNumber').value.trim();
             var position = document.getElementById('playerPosition').value.trim();
             var nickname = document.getElementById('playerNickname').value.trim();
@@ -1774,21 +1781,19 @@
                 players[currentPlayerIndex].nickname = nickname;
                 await savePlayersToCloud();
                 
-                await sendUpdateNotification(players[currentPlayerIndex].name, 'position information');
+                // Remove this line - no email for position updates
+                // await sendUpdateNotification(players[currentPlayerIndex].name, 'position information');
                 
                 alert('Position information saved!');
                 
-                // Check if this is direct player access
                 const urlParams = new URLSearchParams(window.location.search);
                 const isDirectPlayerLink = urlParams.get('uuid');
                 
                 if (isDirectPlayerLink) {
-                    // Stay on player page for direct access
                     hideAllPages();
                     document.getElementById('playerPage').className = 'page active';
                     loadPlayerDetails();
                 } else {
-                    // Go to roster for coach access
                     showRoster();
                 }
             } else {
@@ -1821,21 +1826,23 @@
                 }
                 
                 await savePlayersToCloud();
+                
+                // Add debugging
+                console.log('About to send email notification for questionnaire update');
+                
+                // Send email notification for questionnaire updates
                 await sendUpdateNotification(players[currentPlayerIndex].name, 'Goal & Corner Kick questionnaire');
                 
                 alert('Answers uploaded successfully!');
                 
-                // Check if this is direct player access
                 const urlParams = new URLSearchParams(window.location.search);
                 const isDirectPlayerLink = urlParams.get('uuid');
                 
                 if (isDirectPlayerLink) {
-                    // Stay on player page for direct access
                     hideAllPages();
                     document.getElementById('playerPage').className = 'page active';
                     loadPlayerDetails();
                 } else {
-                    // Go to player page for coach access
                     showPlayerPage();
                 }
                 
