@@ -547,15 +547,22 @@
             
             <!-- Review Status Display for Player -->
             <div class="admin-section" id="playerReviewStatus" style="display: none;">
-                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                    <h4 style="color: #3b82f6; margin: 0 0 10px 0;">Coach Review Status</h4>
-                    <div id="playerReviewStatusText" style="font-weight: bold;"></div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #3b82f6; margin: 0 0 15px 0; text-align: center;">Coach Review Status</h4>
+                    <div id="playerReviewStatusText" style="font-weight: bold; margin-bottom: 15px; text-align: center;"></div>
+                    
+                    <!-- Goal Kick Coach Comments for Player -->
+                    <div id="playerGoalKickComments" style="display: none; margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">Goal Kick Feedback:</strong>
+                        <div id="playerGoalKickCommentsText" style="margin-top: 8px; color: #333; font-style: italic;"></div>
+                    </div>
+                    
+                    <!-- Corner Kick Coach Comments for Player -->
+                    <div id="playerCornerKickComments" style="display: none; background: #fff; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">Corner Kick Defense Feedback:</strong>
+                        <div id="playerCornerKickCommentsText" style="margin-top: 8px; color: #333; font-style: italic;"></div>
+                    </div>
                 </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <button class="btn btn-save" onclick="savePlayerDetails()">Save Position Info</button>
-                <button class="btn btn-cancel" onclick="showRoster()">Cancel</button>
             </div>
         </div>
     </div>
@@ -602,9 +609,25 @@
             
             <!-- Review Status Section -->
             <div class="admin-section" id="reviewSection">
-                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                    <div id="reviewStatus" style="margin-bottom: 15px; font-weight: bold;"></div>
-                    <button id="reviewButton" class="btn" onclick="togglePlayerReview()" style="background: #10b981; color: white;">Mark as Reviewed</button>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #3b82f6; margin: 0 0 20px 0; text-align: center;">Goal & Corner Kick Card Review</h4>
+                    
+                    <!-- Goal Kick Comments -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: bold; color: #333; display: block; margin-bottom: 8px;">Goal Kick - Coach Comments:</label>
+                        <textarea id="goalKickComments" rows="3" placeholder="Feedback on goal kick positioning..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <!-- Corner Kick Comments -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: bold; color: #333; display: block; margin-bottom: 8px;">Corner Kick (Defending) - Coach Comments:</label>
+                        <textarea id="cornerKickComments" rows="3" placeholder="Feedback on corner kick defending..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div id="reviewStatus" style="margin-bottom: 15px; font-weight: bold;"></div>
+                        <button id="reviewButton" class="btn" onclick="saveQuestionnaireReview()" style="background: #10b981; color: white;">Save Review & Comments</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -998,7 +1021,10 @@
                 number: '',
                 position: '',
                 goalKick: '',
-                cornerKick: ''
+                cornerKick: '',
+                goalKickComments: '',
+                cornerKickComments: '',
+                needsReview: false
             };
             
             players.push(newPlayer);
@@ -1182,6 +1208,8 @@
             var reviewStatusElement = document.getElementById('reviewStatus');
             var reviewButtonElement = document.getElementById('reviewButton');
             var reviewSectionElement = document.getElementById('reviewSection');
+            var goalKickCommentsTextarea = document.getElementById('goalKickComments');
+            var cornerKickCommentsTextarea = document.getElementById('cornerKickComments');
             
             // Only show review section if player has responses
             var hasResponses = player.goalKick || player.cornerKick;
@@ -1192,16 +1220,24 @@
             
             reviewSectionElement.style.display = 'block';
             
+            // Load existing comments
+            if (goalKickCommentsTextarea) {
+                goalKickCommentsTextarea.value = player.goalKickComments || '';
+            }
+            if (cornerKickCommentsTextarea) {
+                cornerKickCommentsTextarea.value = player.cornerKickComments || '';
+            }
+            
             if (player.needsReview) {
                 reviewStatusElement.textContent = '🟡 Responses need coach review';
                 reviewStatusElement.style.color = '#f59e0b';
-                reviewButtonElement.textContent = 'Mark as Reviewed';
+                reviewButtonElement.textContent = 'Save Review & Comments';
                 reviewButtonElement.style.background = '#10b981';
             } else {
                 reviewStatusElement.textContent = '✅ Responses have been reviewed by coach';
                 reviewStatusElement.style.color = '#10b981';
-                reviewButtonElement.textContent = 'Mark as Needs Review';
-                reviewButtonElement.style.background = '#f59e0b';
+                reviewButtonElement.textContent = 'Update Review & Comments';
+                reviewButtonElement.style.background = '#3b82f6';
             }
         }
 
@@ -1209,6 +1245,10 @@
             var player = players[currentPlayerIndex];
             var reviewStatusSection = document.getElementById('playerReviewStatus');
             var reviewStatusText = document.getElementById('playerReviewStatusText');
+            var goalKickCommentsDiv = document.getElementById('playerGoalKickComments');
+            var cornerKickCommentsDiv = document.getElementById('playerCornerKickComments');
+            var goalKickCommentsText = document.getElementById('playerGoalKickCommentsText');
+            var cornerKickCommentsText = document.getElementById('playerCornerKickCommentsText');
             
             // Only show if player has responses
             var hasResponses = player.goalKick || player.cornerKick;
@@ -1222,29 +1262,34 @@
             if (player.needsReview) {
                 reviewStatusText.textContent = '⏳ Your responses are waiting for coach review';
                 reviewStatusText.style.color = '#f59e0b';
+                goalKickCommentsDiv.style.display = 'none';
+                cornerKickCommentsDiv.style.display = 'none';
             } else {
                 reviewStatusText.textContent = '✅ Your responses have been reviewed by your coach!';
                 reviewStatusText.style.color = '#10b981';
+                
+                // Show goal kick comments if they exist
+                if (player.goalKickComments) {
+                    goalKickCommentsText.textContent = player.goalKickComments;
+                    goalKickCommentsDiv.style.display = 'block';
+                } else {
+                    goalKickCommentsDiv.style.display = 'none';
+                }
+                
+                // Show corner kick comments if they exist
+                if (player.cornerKickComments) {
+                    cornerKickCommentsText.textContent = player.cornerKickComments;
+                    cornerKickCommentsDiv.style.display = 'block';
+                } else {
+                    cornerKickCommentsDiv.style.display = 'none';
+                }
             }
         }
 
         async function togglePlayerReview() {
-            var player = players[currentPlayerIndex];
-            
-            // Toggle the review status
-            player.needsReview = !player.needsReview;
-            
-            await savePlayersToCloud();
-            
-            // Update the display
-            updateReviewStatusDisplay();
-            
-            // Show confirmation
-            if (player.needsReview) {
-                alert('Player marked as needing review');
-            } else {
-                alert('Player marked as reviewed - great job!');
-            }
+            // This function is now replaced by saveQuestionnaireReview()
+            // Keep for backward compatibility, but redirect to new function
+            await saveQuestionnaireReview();
         }
 
         async function savePlayerDetails() {
@@ -1428,6 +1473,35 @@
             }
         }
         
+        // New function to save questionnaire-specific review and comments
+        async function saveQuestionnaireReview() {
+            var player = players[currentPlayerIndex];
+            var goalKickCommentsTextarea = document.getElementById('goalKickComments');
+            var cornerKickCommentsTextarea = document.getElementById('cornerKickComments');
+            
+            var goalKickComments = goalKickCommentsTextarea ? goalKickCommentsTextarea.value.trim() : '';
+            var cornerKickComments = cornerKickCommentsTextarea ? cornerKickCommentsTextarea.value.trim() : '';
+            
+            // Update player data
+            player.goalKickComments = goalKickComments;
+            player.cornerKickComments = cornerKickComments;
+            player.needsReview = false; // Mark as reviewed
+            player.reviewedDate = new Date().toISOString().split('T')[0];
+            
+            await savePlayersToCloud();
+            
+            // Update the display
+            updateReviewStatusDisplay();
+            
+            // Show confirmation
+            var hasComments = goalKickComments || cornerKickComments;
+            if (hasComments) {
+                alert('Review saved with feedback for ' + player.name + '!');
+            } else {
+                alert(player.name + ' marked as reviewed!');
+            }
+        }
+
         function printPlayerCard() {
             alert('Print functionality coming soon!');
         }
