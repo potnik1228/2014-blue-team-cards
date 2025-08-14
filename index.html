@@ -517,6 +517,7 @@
         </div>
         
         <div class="form-container">
+            <!-- All your existing form fields here -->
             <div class="form-group">
                 <label>Player Name</label>
                 <input type="text" id="playerName" readonly style="background: #f5f5f5;">
@@ -553,17 +554,30 @@
                     
                     <!-- Goal Kick Coach Comments for Player -->
                     <div id="playerGoalKickComments" style="display: none; margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
-                        <strong style="color: #10b981;">Goal Kick Feedback:</strong>
-                        <div id="playerGoalKickCommentsText" style="margin-top: 8px; color: #333; font-style: italic;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #10b981;">Goal Kick Feedback:</strong>
+                            <span id="playerGoalKickCoach" style="font-size: 12px; color: #666; font-style: italic;"></span>
+                        </div>
+                        <div id="playerGoalKickCommentsText" style="color: #333; font-style: italic;"></div>
                     </div>
                     
                     <!-- Corner Kick Coach Comments for Player -->
                     <div id="playerCornerKickComments" style="display: none; background: #fff; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
-                        <strong style="color: #10b981;">Corner Kick Defense Feedback:</strong>
-                        <div id="playerCornerKickCommentsText" style="margin-top: 8px; color: #333; font-style: italic;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #10b981;">Corner Kick Defense Feedback:</strong>
+                            <span id="playerCornerKickCoach" style="font-size: 12px; color: #666; font-style: italic;"></span>
+                        </div>
+                        <div id="playerCornerKickCommentsText" style="color: #333; font-style: italic;"></div>
                     </div>
                 </div>
             </div>
+            
+            <!-- MISSING SAVE BUTTON SECTION - ADD THIS -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-save" onclick="savePlayerDetails()">Save Position Info</button>
+                <button class="btn btn-cancel" onclick="showRoster()">Cancel</button>
+            </div>
+            
         </div>
     </div>
         
