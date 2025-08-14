@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>2014 Blue Team Cards</title>
+    <title>Sierra Surf 2014b Blue Pre-NPL</title>
 
     <script src="firebase-config.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -17,346 +17,518 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://sierrasurfsoccerclub.net/wp-content/uploads/2023/04/Sierra-Surf-Logo-3D-shield-blackoutline-232x300-1.png') no-repeat center right;
-            background-size: 120px;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            width: 80px;
-            height: auto;
-            /* filter: brightness(0) invert(1); */
-        }
-        
-        .header h1 {
-            margin: 0;
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            margin: 10px 0 0 0;
-            font-size: 1.3rem;
-            opacity: 0.95;
-            font-weight: 300;
-        }
-        
-        .main-content {
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
-        .nav-btn {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 2px solid #e2e8f0;
-            color: #1e40af;
-            padding: 25px;
-            border-radius: 15px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .nav-btn:hover::before {
-            left: 100%;
-        }
-        
-        .nav-btn:hover {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-            border-color: #3b82f6;
-        }
-        
-        .btn-title {
-            font-size: 22px;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-        
-        .btn-desc {
-            font-size: 14px;
-            opacity: 0.8;
-            font-weight: 400;
-            line-height: 1.4;
-        }
-        
-        .page {
-            display: none;
-            position: relative;
-            z-index: 1;
-        }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                min-height: 100vh;
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+                color: white;
+                padding: 40px 30px;
+                text-align: center;
+                border-radius: 15px;
+                margin-bottom: 40px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('https://sierrasurfsoccerclub.net/wp-content/uploads/2023/04/Sierra-Surf-Logo-3D-shield-blackoutline-232x300-1.png') no-repeat center right;
+                background-size: 120px;
+                opacity: 0.1;
+                pointer-events: none;
+            }
+            
+            .header-content {
+                position: relative;
+                z-index: 2;
+            }
+            
+            .logo-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: auto;
+                /* filter: brightness(0) invert(1); */
+            }
+            
+            .header h1 {
+                margin: 0;
+                font-size: 2.8rem;
+                font-weight: 700;
+                letter-spacing: -1px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }
+            
+            .header p {
+                margin: 10px 0 0 0;
+                font-size: 1.3rem;
+                opacity: 0.95;
+                font-weight: 300;
+            }
+            
+            .main-content {
+                text-align: center;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            
+            .nav-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .nav-btn {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                color: #1e40af;
+                padding: 25px;
+                border-radius: 15px;
+                font-size: 18px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: left;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .nav-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            .nav-btn:hover::before {
+                left: 100%;
+            }
+            
+            .nav-btn:hover {
+                background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+            
+            .btn-title {
+                font-size: 22px;
+                margin-bottom: 8px;
+                font-weight: 700;
+            }
+            
+            .btn-desc {
+                font-size: 14px;
+                opacity: 0.8;
+                font-weight: 400;
+                line-height: 1.4;
+            }
+            
+            .page {
+                display: none;
+                position: relative;
+                z-index: 1;
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                min-height: 100vh;
+                padding: 0;
+                margin: 0;
+            }
 
-        .page.active {
-            display: block;
-            position: relative;
-            z-index: 2;
-        }
+            .page.active {
+                display: block;
+                position: relative;
+                z-index: 2;
+            }
 
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .back-btn {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
-        }
-        
-        .form-container {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-        
-        .form-group {
-            margin: 25px 0;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #1e40af;
-            font-size: 16px;
-        }
-        
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 15px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-        
-        .form-group input:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .btn-save {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-        
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-        
-        .btn-cancel {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-        }
-        
-        .btn-cancel:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-        }
-        
-        .roster-list {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-        
-        .player-item {
-            padding: 20px;
-            border-bottom: 1px solid #e2e8f0;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .player-item:hover {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            transform: translateX(5px);
-        }
-        
-        .player-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        
-        .player-name {
-            font-size: 18px;
-            font-weight: 700;
-        }
-        
-        .empty-message {
-            text-align: center;
-            color: #64748b;
-            font-style: italic;
-            padding: 40px;
-            font-size: 16px;
-        }
-        
-        .admin-section {
-            margin: 30px 0;
-            padding: 20px 0;
-        }
-        
-        .admin-info-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .admin-info-item {
-            padding: 20px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            border-left: 4px solid #3b82f6;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .admin-info-item strong {
-            color: #1e40af;
-            margin-right: 10px;
-            font-weight: 600;
-        }
-        
-        .response-item {
-            margin: 20px 0;
-            padding: 25px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            border-left: 4px solid #10b981;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        
-        .response-item strong {
-            display: block;
-            margin-bottom: 12px;
-            color: #1e40af;
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .response-text {
-            color: #64748b;
-            line-height: 1.6;
-            font-style: italic;
-            font-size: 15px;
-        }
-        
-        .response-text.answered {
-            font-style: normal;
-            color: #334155;
-            font-weight: 500;
-        }
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding: 20px 30px;
+            }
+            
+            .back-btn {
+                background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 10px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            
+            .back-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            }
+            
+            .form-container {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                padding: 30px;
+                border-radius: 15px;
+                max-width: 600px;
+                margin: 0 auto;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .form-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .form-container:hover::before {
+                left: 100%;
+            }
+
+            .form-container:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+            
+            .form-group {
+                margin: 25px 0;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 10px;
+                font-weight: 600;
+                color: #1e40af;
+                font-size: 16px;
+            }
+            
+            .form-group input, .form-group textarea {
+                width: 100%;
+                padding: 15px 18px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 16px;
+                box-sizing: border-box;
+                transition: all 0.3s ease;
+                font-family: inherit;
+            }
+            
+            .form-group input:focus, .form-group textarea:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+            
+            .btn {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                color: #1e40af;
+                padding: 20px 35px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+                margin: 0 10px;
+                text-transform: none;
+                letter-spacing: normal;
+            }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .btn:hover::before {
+                left: 100%;
+            }
+
+            .btn:hover {
+                background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+            
+            .btn-save {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                border-color: #10b981;
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            }
+            
+            .btn-save:hover {
+                background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                border-color: #059669;
+                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+                transform: translateY(-3px);
+            }
+            
+            .btn-cancel {
+                background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                color: white;
+                border-color: #6b7280;
+            }
+            
+            .btn-cancel:hover {
+                background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+                border-color: #4b5563;
+                box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+                transform: translateY(-3px);
+            }
+            
+            .roster-list {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                border-radius: 15px;
+                padding: 25px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .roster-list::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .roster-list:hover::before {
+                left: 100%;
+            }
+
+            .roster-list:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+            
+            .player-item {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                color: #1e40af;
+                padding: 25px;
+                border-radius: 15px;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .player-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .player-item:hover::before {
+                left: 100%;
+            }
+
+            .player-item:hover {
+                background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+
+            .player-item:hover .player-name {
+                color: white;
+            }
+
+            .player-item:hover div[style*="color"] {
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+            
+            .player-item:last-child {
+                margin-bottom: 0;
+            }
+            
+            .player-name {
+                font-size: 18px;
+                font-weight: 700;
+            }
+            
+            .empty-message {
+                text-align: center;
+                color: #64748b;
+                font-style: italic;
+                padding: 40px;
+                font-size: 16px;
+            }
+            
+            .admin-section {
+                margin: 30px 0;
+                padding: 20px 0;
+            }
+            
+            .admin-info-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin: 20px 0;
+            }
+            
+            .admin-info-item {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                padding: 20px;
+                border-radius: 12px;
+                border-left: 4px solid #3b82f6;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .admin-info-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .admin-info-item:hover::before {
+                left: 100%;
+            }
+
+            .admin-info-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                border-color: #3b82f6;
+            }
+            
+            .admin-info-item strong {
+                color: #1e40af;
+                margin-right: 10px;
+                font-weight: 600;
+            }
+            
+            .response-item {
+                margin: 20px 0;
+                padding: 25px;
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                border-left: 4px solid #10b981;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .response-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .response-item:hover::before {
+                left: 100%;
+            }
+
+            .response-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+                border-color: #10b981;
+            }
+            
+            .response-item strong {
+                display: block;
+                margin-bottom: 12px;
+                color: #1e40af;
+                font-weight: 600;
+                font-size: 16px;
+            }
+            
+            .response-text {
+                color: #64748b;
+                line-height: 1.6;
+                font-style: italic;
+                font-size: 15px;
+            }
+            
+            .response-text.answered {
+                font-style: normal;
+                color: #334155;
+                font-weight: 500;
+            }
+
+            .main-content {
+                padding: 20px 30px;
+            }
     </style>
 </head>
 <body>
@@ -364,7 +536,7 @@
     <div id="loginPage" class="page active">
         <div class="header">
             <div class="header-content">
-                <h1>2014 Blue Team Cards</h1>
+                <h1>Sierra Surf 2014b Blue Pre-NPL</h1>
                 <p>Coach Login Required</p>
             </div>
         </div>
@@ -403,8 +575,8 @@
                         <div class="logo-container">
                             <img src="https://sierrasurfsoccerclub.net/wp-content/uploads/2023/04/Sierra-Surf-Logo-3D-shield-blackoutline-232x300-1.png" alt="Sierra Surf Soccer Club" class="logo">
                             <div>
-                                <h1>2014 Blue Team Cards</h1>
-                                <p>Goal and Corner Kick Reference Cards</p>
+                                <h1>Sierra Surf 2014b Blue Pre-NPL</h1>
+                                <p>Player Questionnaires</p>
                             </div>
                         </div>
                     </div>
@@ -1011,48 +1183,100 @@
         function showAddPlayer() {
             hideAllPages();
             document.getElementById('addPlayerPage').className = 'page active';
+            
+            // Add header to the page
+            var pageContent = document.getElementById('addPlayerPage');
+            var existingContent = pageContent.innerHTML;
+            
+            // Check if header already exists
+            if (!pageContent.querySelector('.header')) {
+                pageContent.innerHTML = createPageHeader('Add New Player', 'Add a player to the 2014 Blue Team roster') + existingContent;
+            }
+            
             document.getElementById('newPlayerName').value = '';
         }
         
         function showRoster() {
             hideAllPages();
             document.getElementById('rosterPage').className = 'page active';
+            
+            var pageContent = document.getElementById('rosterPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Team Roster', 'View and select players to edit') + existingContent;
+            }
+            
             displayRoster();
         }
-        
+
         function showAddCoach() {
             hideAllPages();
             document.getElementById('addCoachPage').className = 'page active';
+            
+            var pageContent = document.getElementById('addCoachPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Add New Coach', 'Add coaching staff to the system') + existingContent;
+            }
+            
             document.getElementById('newCoachName').value = '';
             document.getElementById('coachRole').value = '';
             document.getElementById('coachEmail').value = '';
         }
-        
+
         function showAdmin() {
             hideAllPages();
             document.getElementById('adminPage').className = 'page active';
+            
+            var pageContent = document.getElementById('adminPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Admin Panel', 'Manage all player data and responses', true) + existingContent;
+            }
+            
             displayAdminRoster();
         }
         
         function showAdminPlayer() {
             hideAllPages();
             document.getElementById('adminPlayerPage').className = 'page active';
+            
+            var pageContent = document.getElementById('adminPlayerPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Player Admin', 'Manage player data and responses', true) + existingContent;
+            }
+            
             if (currentPlayerIndex >= 0) {
                 loadAdminPlayerDetails();
             }
         }
- 
+
         function showAdminCoach() {
             hideAllPages();
             document.getElementById('adminCoachPage').className = 'page active';
+            
+            var pageContent = document.getElementById('adminCoachPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Coach Admin', 'Manage coaching staff information', true) + existingContent;
+            }
+            
             if (currentCoachIndex >= 0) {
                 loadAdminCoachDetails();
             }
-        }        
-        
+        }
+
         function showPlayerPage() {
             hideAllPages();
             document.getElementById('playerPage').className = 'page active';
+            
+            var pageContent = document.getElementById('playerPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Player Details', 'Update your position and card information') + existingContent;
+            }
+            
             if (currentPlayerIndex >= 0) {
                 loadPlayerDetails();
             }
@@ -1061,14 +1285,28 @@
         function showPlayerReadOnlyPage() {
             hideAllPages();
             document.getElementById('playerReadOnlyPage').className = 'page active';
+            
+            var pageContent = document.getElementById('playerReadOnlyPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Player Card', 'View and review player information', true) + existingContent;
+            }
+            
             if (currentPlayerIndex >= 0) {
                 loadPlayerReadOnlyDetails();
             }
-        }        
+        }
 
         function showCoachPage() {
             hideAllPages();
             document.getElementById('coachPage').className = 'page active';
+            
+            var pageContent = document.getElementById('coachPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Coach Details', 'Edit coaching staff information', true) + existingContent;
+            }
+            
             if (currentCoachIndex >= 0) {
                 loadCoachDetails();
             }
@@ -1095,6 +1333,13 @@
         function showGoalCornerCard() {
             hideAllPages();
             document.getElementById('goalCornerPage').className = 'page active';
+            
+            var pageContent = document.getElementById('goalCornerPage');
+            if (!pageContent.querySelector('.header')) {
+                var existingContent = pageContent.innerHTML;
+                pageContent.innerHTML = createPageHeader('Goal & Corner Kick Card', 'Set your positioning for game situations') + existingContent;
+            }
+            
             if (currentPlayerIndex >= 0) {
                 loadCardAnswers();
             }
@@ -1721,6 +1966,27 @@
             } catch (err) {
                 alert('Unable to copy automatically. Please select and copy the link manually.');
             }
+        }
+        function createPageHeader(title, subtitle, showSignOut = false) {
+            var headerHTML = `
+                <div class="header">
+                    <div class="header-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="logo-container">
+                                    <img src="https://sierrasurfsoccerclub.net/wp-content/uploads/2023/04/Sierra-Surf-Logo-3D-shield-blackoutline-232x300-1.png" alt="Sierra Surf Soccer Club" class="logo">
+                                    <div>
+                                        <h1>${title}</h1>
+                                        <p>${subtitle}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            ${showSignOut ? '<button onclick="signOutCoach()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease;">Sign Out</button>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return headerHTML;
         }
         
         // Check for direct player link on page load
