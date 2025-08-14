@@ -795,17 +795,32 @@
                 var index = parseInt(playerId);
                 if (index >= 0 && index < players.length && players[index].name === playerName) {
                     currentPlayerIndex = index;
-                    showPlayerPage();
                     
-                    // Update page title to show this is a direct player access
-                    document.getElementById('playerPageTitle').textContent = players[index].name + ' - Your Page';
+                    // Hide the home page navigation for direct player access
+                    hideAllPages();
+                    document.getElementById('playerPage').className = 'page active';
+                    loadPlayerDetails();
                     
-                    // Change back button to go to a simple "done" action
+                    // Modify the player page for direct access
+                    document.getElementById('playerPageTitle').textContent = players[index].name + ' - Your Soccer Card';
+                    
+                    // Change back button to a simple "Done" message
                     var backBtn = document.querySelector('#playerPage .back-btn');
-                    backBtn.textContent = '← Done';
+                    backBtn.textContent = '✓ Done';
                     backBtn.onclick = function() {
-                        alert('Thank you! You can bookmark this page to return anytime.');
+                        alert('Your information has been saved! You can bookmark this page to return anytime.');
                     };
+                    
+                    // Hide the header on home page so players can't navigate there
+                    document.getElementById('homePage').style.display = 'none';
+                    
+                    // Also modify the goal/corner card page back button
+                    var cardBackBtn = document.querySelector('#goalCornerPage .back-btn');
+                    cardBackBtn.onclick = function() {
+                        hideAllPages();
+                        document.getElementById('playerPage').className = 'page active';
+                    };
+                    
                 } else {
                     alert('Invalid player link. Please contact your coach for a new link.');
                 }
